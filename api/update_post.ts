@@ -1,0 +1,34 @@
+import type { APIHandler } from "aleph/types.d.ts";
+import { updatePost, selectUserByGoogleId } from "~/lib/db.ts";
+import { getGoogleUser } from "~/lib/auth.ts";
+
+export type RequestType = { postId: number, source: string };
+export type ResponseType = {postId: number};
+
+export const handler: APIHandler = async ({ response, request }) => {
+  console.log(request.url);
+
+  const googleUser = await getGoogleUser(request, response);
+  if (!googleUser) {
+    response.status = 401;
+    return;
+  }
+  const user = await selectUserByGoogleId(googleUser.id);
+  if (!user) {
+    response.status = 401;
+    return;
+  }
+
+  const requestJson: RequestType = await request.json();
+  if (requestJson) {
+    if (requestJson.source.length > 10000) {
+      response.status = 400;
+      return;
+    }
+    await updatePost({postId: requestJson.postId, userId: user.id,  source: requestJson.source});
+    response.json(null);
+    return;
+  }
+
+  response.json(null);
+};

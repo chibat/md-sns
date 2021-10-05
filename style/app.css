@@ -1,0 +1,23 @@
+
+a {
+  color: black;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+a.noDecoration {
+  color: black;
+  text-decoration: none;
+}
+
+a.doc {
+  color: blue;
+  text-decoration: none;
+}
+
+body {
+  --bs-bg-opacity: 1;
+  background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;
+}

@@ -1,0 +1,101 @@
+import React from 'react'
+import { useContext, useState, useEffect } from 'react'
+import { useRouter } from 'aleph/react'
+import { UserContext } from '~/lib/UserContext.ts'
+import Posts from '~/components/posts.tsx'
+import { request } from '~/lib/request.ts';
+import { Post } from '~/lib/db.ts';
+import type { RequestType, ResponseType } from "~/api/get_posts.ts";
+
+export default function Home() {
+  const router = useRouter();
+  console.debug("start");
+
+  function goPostForm() {
+    router.push("/post");
+  }
+
+  const user = useContext(UserContext);
+
+  const [posts, setPosts] = useState<Array<Post>>([]);
+  const [previousButton, setPreviousButton] = useState<boolean>(false);
+  const [nextButton, setNextButton] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const results = await request<RequestType, ResponseType>("get_posts", {});
+      setPosts(results);
+      if (results.length < 3) {
+        setPreviousButton(false);
+        setNextButton(false);
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  async function previous() {
+    setLoading(true);
+    const postId = posts[0].id;
+    const results = await request<RequestType, ResponseType>("get_posts", { postId, direction: "previous" });
+    if (results.length > 0) {
+      setPosts(results);
+      setNextButton(true);
+    }
+
+    if (results.length < 3) {
+      setPreviousButton(false);
+    }
+    setLoading(false);
+  }
+
+  async function next() {
+    setLoading(true);
+    const postId = posts[posts.length - 1].id;
+    const results = await request<RequestType, ResponseType>("get_posts", { postId, direction: "next" });
+    if (results.length > 0) {
+      setPosts(results);
+      setPreviousButton(true);
+    }
+
+    if (results.length < 3) {
+      setNextButton(false);
+    }
+    setLoading(false);
+  }
+
+  return (
+    <>
+      <head>
+        <title>md-sns</title>
+      </head>
+      {user &&
+        <div className="card mb-3">
+          <div className="card-body">
+            {user?.picture &&
+              <img src={user.picture} alt="mdo" width="32" height="32" className="rounded-circle me-2" />
+            }
+            <input className="form-control" type="text" value="Post" aria-label="Post" readOnly style={{ cursor: "pointer", width: "90%", display: "inline" }} onClick={goPostForm}></input>
+          </div>
+        </div>
+      }
+      {loading &&
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      }
+      {!loading &&
+        <>
+          <Posts posts={posts} />
+          {previousButton && <button className="btn" onClick={previous}>Previous</button>}
+          {nextButton && <button className="btn" onClick={next}>Next</button>}
+          <br />
+        </>
+      }
+    </>
+  );
+}
+
