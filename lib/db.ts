@@ -3,7 +3,7 @@
 
 import { Pool, PoolClient } from "https://deno.land/x/postgres@v0.11.3/mod.ts";
 
-const POOL_CONNECTIONS = 2;
+const POOL_CONNECTIONS = 5;
 const PAGE_ROWS = 3;
 const dbUrl = Deno.env.get("DATABASE_URL");
 
