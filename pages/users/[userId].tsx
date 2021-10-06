@@ -85,6 +85,7 @@ export default function User() {
           {previousButton && <button className="btn btn-secondary me-2" onClick={previous} style={{width: "150px"}}>Previous</button>}
           {nextButton && <button className="btn btn-secondary" onClick={next} style={{width: "150px"}}>Next</button>}
           <br />
+          <br />
         </>
       }
     </>
