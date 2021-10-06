@@ -5,4 +5,7 @@
 * star
 * bookmark
 * reply あったときの、notification
+* search
+* tag
+* sort の仕様を変える
 
