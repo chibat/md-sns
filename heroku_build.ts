@@ -20,6 +20,7 @@ await deno({
     "cdn.esm.sh",
     "registry.npmjs.org",
     "cdnjs.cloudflare.com",
+    "cdn.jsdelivr.net",
   ],
   "--allow-read": true,
   "--allow-env": [
