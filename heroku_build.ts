@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run -A --unstable
 
-import { deno } from "./tasks_utils.ts";
+import { deno, denoDir } from "./tasks_utils.ts";
 
 const COMMAND_PATH="https://deno.land/x/aleph@v0.3.0-beta.19/commands";
 
@@ -37,6 +37,7 @@ await deno({
   "--allow-write": [
     "./.aleph",
     "./dist",
+    await denoDir(),
     `${home}/.cache`,
   ],
   "--allow-run": [
