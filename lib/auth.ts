@@ -25,7 +25,7 @@ export type AuthInfo = {
 export function getCallbackUrl(requestUrl: string) {
   console.log(`${requestUrl} requestUrl`);
   const url = new URL(requestUrl);
-  return url.protocol + "//" + url.host + CALL_BACK_PATH;
+  return (url.hostname === "localhost" ? "http" : "https") + "://" + url.host + CALL_BACK_PATH;
 }
 
 export function getAuthUrl(requestUrl: string): string {
