@@ -123,7 +123,7 @@ export const updatePost = wrap<
   void
 >(async (client, params) => {
   await client.queryObject`
-      UPDATE post SET source = ${params.source}
+      UPDATE post SET source = ${params.source}, updated_at=CURRENT_TIMESTAMP
       WHERE id = ${params.postId} and user_id = ${params.userId}
       RETURNING id
     `;
@@ -151,7 +151,7 @@ export const selectPosts = wrap<void, Array<Post>>(async (
   _,
 ) => {
   const result = await client.queryObject<Post>(
-    `${SELECT_POST} ORDER BY p.id DESC LIMIT ${PAGE_ROWS}`,
+    `${SELECT_POST} ORDER BY p.updated_at DESC LIMIT ${PAGE_ROWS}`,
   );
   return result.rows;
 });
@@ -162,7 +162,7 @@ export const selectPostsByUserId = wrap<number, Array<Post>>(
       `
       ${SELECT_POST}
       WHERE p.user_id = $1
-      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}`,
+      ORDER BY p.updated_at DESC LIMIT ${PAGE_ROWS}`,
       userId,
     );
     return result.rows;
@@ -175,7 +175,7 @@ export const selectPostByLtId = wrap<number, Array<Post>>(
       `
       ${SELECT_POST}
       WHERE p.id < $1
-      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}`,
+      ORDER BY p.updated_at DESC LIMIT ${PAGE_ROWS}`,
       ltId,
     );
     return result.rows;
@@ -190,7 +190,7 @@ export const selectPostByLtIdUserId = wrap<
     `
       ${SELECT_POST}
       WHERE p.id < $1 and p.user_id = $2
-      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}
+      ORDER BY p.updated_at DESC LIMIT ${PAGE_ROWS}
     `,
     params.ltId,
     params.userId,
@@ -204,8 +204,8 @@ export const selectPostByGtId = wrap<number, Array<Post>>(
       `SELECT * FROM (
         ${SELECT_POST}
         WHERE p.id > $1
-        ORDER BY p.id LIMIT ${PAGE_ROWS}
-      ) s ORDER BY id DESC
+        ORDER BY p.updated_at LIMIT ${PAGE_ROWS}
+      ) s ORDER BY updated_at DESC
     `,
       gtId,
     );
@@ -221,8 +221,8 @@ export const selectPostByGtIdUserId = wrap<
     `SELECT * FROM (
         ${SELECT_POST}
         WHERE p.id > $1 AND p.user_id = $2
-        ORDER BY p.id LIMIT ${PAGE_ROWS}
-      ) s ORDER BY id DESC
+        ORDER BY p.updated_at LIMIT ${PAGE_ROWS}
+      ) s ORDER BY updated_at DESC
     `,
     params.gtId,
     params.userId,
@@ -247,11 +247,20 @@ export const insertComment = wrap<
   { postId: number; userId: number; source: string },
   number
 >(async (client, params) => {
+
   const result = await client.queryObject<{ id: number }>`
       INSERT INTO comment (post_id, user_id, source)
       VALUES (${params.postId}, ${params.userId}, ${params.source})
       RETURNING id
     `;
+
+  await client.queryObject`
+      UPDATE post
+      SET updated_at=CURRENT_TIMESTAMP
+      WHERE id = ${params.postId}
+      RETURNING id
+    `;
+
   return result.rows[0].id;
 });
 
