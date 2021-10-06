@@ -23,6 +23,7 @@ export type AuthInfo = {
 };
 
 export function getCallbackUrl(requestUrl: string) {
+  console.log(`${requestUrl} requestUrl`);
   const url = new URL(requestUrl);
   return url.protocol + "//" + url.host + CALL_BACK_PATH;
 }
