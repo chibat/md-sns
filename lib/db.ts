@@ -50,11 +50,11 @@ function wrap<P, R>(execute: ExecuteType<P, R>) {
   return async (params: P): Promise<R> => {
     const client = await pool.connect();
     try {
-      return execute(client, params);
+      return await execute(client, params);
     } catch (error) {
       await pool.end();
       const client = await pool.connect();
-      return execute(client, params);
+      return await execute(client, params);
     } finally {
       await client.release();
     }
