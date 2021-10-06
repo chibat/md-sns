@@ -8,4 +8,5 @@
 * search
 * tag
 * sort の仕様を変える
+* link は別 tab で開く
 
