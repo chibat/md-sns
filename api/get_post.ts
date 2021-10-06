@@ -6,6 +6,7 @@ export type RequestType = { postId: number };
 export type ResponseType = Post | null;
 
 export const handler: APIHandler = async ({request, response}) => {
+  console.info(request.url);
   const params: RequestType = await request.json();
   const result: ResponseType = await selectPost(params.postId);
   response.json(result);

@@ -9,12 +9,17 @@
 * Marked
 * highlight.js
 * heroku-buildpack-deno
+* Google OAuth 2.0
 
-## environment variables
+## Environment Variables
 ### auto
-* PORT
-* DATABASE_URL
+* `PORT`
+* `DATABASE_URL`
 ### manual
-* DATABASE_HOSTNAME
-* 
+* `DATABASE_HOSTNAME`
+
+## Deploy
+```
+git push heroku main
+```
 
