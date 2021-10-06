@@ -68,9 +68,14 @@ export default function App(
           </div>
         </header>
         {authInfo && authInfo.authUrl &&
-          <div className="mx-auto" style={{ width: "300px" }}>
-            <input type="image" src="/assets/img/btn_google_signin_dark_pressed_web.png" onClick={signin} />
-          </div>
+          <>
+            <div className="mx-auto" style={{ width: "300px" }}>
+              <input type="image" src="/assets/img/btn_google_signin_dark_pressed_web.png" onClick={signin} />
+            </div>
+            <div className="mx-auto mb-3" style={{ width: "400px" }}>
+              You will be able to post when you Sign-in.
+            </div>
+          </>
         }
         <main className="container">
           <UserContext.Provider value={authInfo?.loginUser}>
