@@ -67,7 +67,7 @@ export default function Post() {
             }
           </div>
           <div className="card-footer bg-transparent">
-            <button className="btn btn-primary" onClick={post} disabled={loading}>
+            <button className="btn btn-primary" onClick={post} disabled={loading || text.length === 0}>
               {loading &&
                 <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
               }

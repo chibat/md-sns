@@ -4,6 +4,7 @@
 * Deno
 * TypeScript
 * Aleph.js
+* React
 * Heroku
 * PostgreSQL
 * Marked
@@ -20,8 +21,18 @@
 * `APP_AUTH_CLIENT_ID`
 * `APP_AUTH_CLIENT_SECRET`
 
+## Development
+```
+./tasks.ts dev
+```
+
+## Start
+```
+./tasks.ts start
+```
+
 ## Deploy
 ```
-git push heroku main
+./tasks.ts deploy
 ```
 

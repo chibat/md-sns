@@ -93,7 +93,7 @@ export default function Post() {
             <div className="card-header bg-transparent d-flex justify-content-between">
               <div>
                 <img src={post.picture} alt="mdo" width="32" height="32" className="rounded-circle" />
-                <a href={`/users/${post.user_id}`} className="ms-2 me-2">{post.name}</a>
+                <a href={`/users/${post.user_id}`} className="ms-2 me-2 noDecoration">{post.name}</a>
                 {post.updated_at}
               </div>
               {user?.appId === post.user_id &&
@@ -112,7 +112,7 @@ export default function Post() {
                   <div className="d-flex justify-content-between">
                     <div>
                       <img src={comment.picture} alt="mdo" width="32" height="32" className="rounded-circle" />
-                      <a href={`/users/${comment.user_id}`} className="ms-2 me-2">{comment.name}</a>
+                      <a href={`/users/${comment.user_id}`} className="ms-2 me-2 noDecoration">{comment.name}</a>
                       {comment.updated_at}
                     </div>
                     {user?.appId === comment.user_id &&
@@ -144,7 +144,7 @@ export default function Post() {
                     }
                   </div>
                   <div className="mt-2">
-                    <button className="btn btn-primary" onClick={reply} disabled={loading}>
+                    <button className="btn btn-primary" onClick={reply} disabled={loading || source.length === 0}>
                       {loading &&
                         <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                       }

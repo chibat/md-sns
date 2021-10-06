@@ -17,6 +17,7 @@ export default function About() {
             <li>Deno</li>
             <li>TypeScript</li>
             <li>Aleph.js</li>
+            <li>React</li>
             <li>Heroku</li>
             <li>PostgreSQL</li>
             <li>Marked</li>
@@ -36,6 +37,7 @@ export default function About() {
             <li>Deno</li>
             <li>TypeScript</li>
             <li>Aleph.js</li>
+            <li>React</li>
             <li>Heroku</li>
             <li>PostgreSQL</li>
             <li>Marked</li>

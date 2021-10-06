@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run -A --unstable
 
-import { deno, denoDir, tasks, rm } from "./tasks_utils.ts";
+import { deno, denoDir, tasks, rm, $ } from "./tasks_utils.ts";
 
 //const CLI="https://deno.land/x/aleph@v0.3.0-beta.19/cli.ts";
 const COMMAND_PATH="https://deno.land/x/aleph@v0.3.0-beta.19/commands";
@@ -184,7 +184,7 @@ async function test() {
 
 
 async function deploy() {
-  // write deploy script
+  await $(["git", "push", "heroku", "main"]);
 }
 
 async function clean() {

@@ -38,8 +38,8 @@ export default function Posts(props: Props) {
           <div className="card-header bg-transparent d-flex justify-content-between">
             <div>
               <img src={post.picture} alt="mdo" width="32" height="32" className="rounded-circle" />
-              <a href={`/users/${post.user_id}`} className="ms-2">{post.name}</a>
-              <a href={`/posts/${post.id}`} className="ms-2">{post.updated_at}</a>
+              <a href={`/users/${post.user_id}`} className="ms-2 noDecoration">{post.name}</a>
+              <a href={`/posts/${post.id}`} className="ms-2 noDecoration">{post.updated_at}</a>
             </div>
             {user && user.appId === post.user_id &&
               <div>
@@ -58,7 +58,7 @@ export default function Posts(props: Props) {
                   <a className="btn btn-outline-secondary btn-sm" href={`/posts/${post.id}`}>Comment</a>
                 }
                 {Number(post.comments) > 0 &&
-                  <a className="ms-3" href={`/posts/${post.id}`}>{post.comments} Comment{post.comments === "1" ? "" : "s"}</a>
+                  <a className="ms-3 noDecoration" href={`/posts/${post.id}`}>{post.comments} Comment{post.comments === "1" ? "" : "s"}</a>
                 }
               </div>
             </div>

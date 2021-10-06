@@ -51,7 +51,7 @@ export default function App(
           <div className="container-fluid d-grid gap-3 align-items-center" style={{ gridTemplateColumns: "1fr 2fr" }}>
             <a className="fs-4 noDecoration" href="#" onClick={goTop}>md-sns</a>
             <div className="d-flex align-items-center ms-auto">
-              <a className="me-3" href="/about">About</a>
+              <a className="me-3 noDecoration" href="/about">About</a>
               {authInfo && authInfo.loginUser &&
                 <div className="flex-shrink-0 dropdown">
                   <a href="#" className="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
