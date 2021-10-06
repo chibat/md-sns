@@ -90,8 +90,8 @@ export default function Home() {
       {!loading &&
         <>
           <Posts posts={posts} />
-          {previousButton && <button className="btn" onClick={previous}>Previous</button>}
-          {nextButton && <button className="btn" onClick={next}>Next</button>}
+          {previousButton && <button className="btn btn-secondary me-2" onClick={previous} style={{width: "150px"}}>Previous</button>}
+          {nextButton && <button className="btn btn-secondary" onClick={next} style={{width: "150px"}}>Next</button>}
           <br />
         </>
       }
