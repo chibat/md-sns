@@ -151,7 +151,7 @@ export const selectPosts = wrap<void, Array<Post>>(async (
   _,
 ) => {
   const result = await client.queryObject<Post>(
-    `${SELECT_POST} ORDER BY p.updated_at DESC LIMIT ${PAGE_ROWS}`,
+    `${SELECT_POST} ORDER BY p.id DESC LIMIT ${PAGE_ROWS}`,
   );
   return result.rows;
 });
@@ -162,7 +162,7 @@ export const selectPostsByUserId = wrap<number, Array<Post>>(
       `
       ${SELECT_POST}
       WHERE p.user_id = $1
-      ORDER BY p.updated_at DESC LIMIT ${PAGE_ROWS}`,
+      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}`,
       userId,
     );
     return result.rows;
@@ -175,7 +175,7 @@ export const selectPostByLtId = wrap<number, Array<Post>>(
       `
       ${SELECT_POST}
       WHERE p.id < $1
-      ORDER BY p.updated_at DESC LIMIT ${PAGE_ROWS}`,
+      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}`,
       ltId,
     );
     return result.rows;
@@ -190,7 +190,7 @@ export const selectPostByLtIdUserId = wrap<
     `
       ${SELECT_POST}
       WHERE p.id < $1 and p.user_id = $2
-      ORDER BY p.updated_at DESC LIMIT ${PAGE_ROWS}
+      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}
     `,
     params.ltId,
     params.userId,
@@ -204,8 +204,8 @@ export const selectPostByGtId = wrap<number, Array<Post>>(
       `SELECT * FROM (
         ${SELECT_POST}
         WHERE p.id > $1
-        ORDER BY p.updated_at LIMIT ${PAGE_ROWS}
-      ) s ORDER BY updated_at DESC
+        ORDER BY p.id LIMIT ${PAGE_ROWS}
+      ) s ORDER BY id DESC
     `,
       gtId,
     );
@@ -221,8 +221,8 @@ export const selectPostByGtIdUserId = wrap<
     `SELECT * FROM (
         ${SELECT_POST}
         WHERE p.id > $1 AND p.user_id = $2
-        ORDER BY p.updated_at LIMIT ${PAGE_ROWS}
-      ) s ORDER BY updated_at DESC
+        ORDER BY p.id LIMIT ${PAGE_ROWS}
+      ) s ORDER BY id DESC
     `,
     params.gtId,
     params.userId,
