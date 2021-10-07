@@ -5,6 +5,7 @@ import { UserContext } from '~/lib/UserContext.ts'
 import Posts from '~/components/posts.tsx'
 import { request } from '~/lib/request.ts';
 import { Post } from '~/lib/db.ts';
+import { PAGE_ROWS } from '~/lib/constants.ts';
 import type { RequestType, ResponseType } from "~/api/get_posts.ts";
 import type { RequestType as UserRequest, ResponseType as UserResponse } from "~/api/get_user.ts";
 
@@ -28,7 +29,7 @@ export default function User() {
       setAppUser(result);
       const results = await request<RequestType, ResponseType>("get_posts", { userId });
       setPosts(results);
-      if (results.length < 3) {
+      if (results.length < PAGE_ROWS) {
         setPreviousButton(false);
         setNextButton(false);
       }
@@ -45,7 +46,7 @@ export default function User() {
       setNextButton(true);
     }
 
-    if (results.length < 3) {
+    if (results.length < PAGE_ROWS) {
       setPreviousButton(false);
     }
     setLoading(false);
@@ -60,7 +61,7 @@ export default function User() {
       setPreviousButton(true);
     }
 
-    if (results.length < 3) {
+    if (results.length < PAGE_ROWS) {
       setNextButton(false);
     }
     setLoading(false);

@@ -1,7 +1,5 @@
 # TODO
 機能追加するとしたら、、
-* next, previous は強調したいかも。
-* 改行で `<br/>`
 * follow
 * follow した人だけ表示される timeline
 * star
