@@ -20,7 +20,7 @@ export default function Home() {
 
   const [posts, setPosts] = useState<Array<Post>>([]);
   const [previousButton, setPreviousButton] = useState<boolean>(false);
-  const [nextButton, setNextButton] = useState<boolean>(true);
+  const [nextButton, setNextButton] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -31,6 +31,8 @@ export default function Home() {
       if (results.length < PAGE_ROWS) {
         setPreviousButton(false);
         setNextButton(false);
+      } else {
+        setNextButton(true);
       }
       setLoading(false);
     })();
