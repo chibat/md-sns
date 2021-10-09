@@ -6,6 +6,12 @@ export type LoginUser = {
   picture: string
 }
 
+export type User = {
+  userId: number;
+  name: string;
+  picture: string
+}
+
 export type Post = {
   id: number;
   userId: number;

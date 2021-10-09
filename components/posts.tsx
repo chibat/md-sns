@@ -26,7 +26,7 @@ export default function Posts(props: Props) {
   }
 
   const user = useContext(UserContext);
-  console.debug("start ", user);
+  console.debug("start ");
 
   return (
     <>
