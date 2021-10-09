@@ -7,7 +7,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.0/styles/tomorr
 import marked from 'https://esm.sh/marked@2.0.1';
 import "./style/app.css";
 
-marked.setOptions({breaks: true});
+marked.setOptions({ breaks: true });
 
 export default function App(
   { Page, pageProps }: { Page: ComponentType<any>; pageProps: any },
@@ -52,7 +52,13 @@ export default function App(
       <div className="page">
         <header className="py-3 mb-3 border-bottom bg-white">
           <div className="container-fluid d-grid gap-3 align-items-center" style={{ gridTemplateColumns: "1fr 2fr" }}>
-            <a className="fs-4 noDecoration" href="#" onClick={goTop}>md-sns</a>
+            <div>
+            <a className="fs-4 me-3 noDecoration" href="#" onClick={goTop}>md-sns</a>
+              <a className="me-3 noDecoration" href="/">All</a>
+              {authInfo && authInfo.loginUser &&
+                <a className="me-3 noDecoration" href={`/following/${authInfo.loginUser.appId}`}>Following</a>
+              }
+            </div>
             <div className="d-flex align-items-center ms-auto">
               <a className="me-3 noDecoration" href="/about">About</a>
               {authInfo && authInfo.loginUser &&

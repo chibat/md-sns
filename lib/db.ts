@@ -210,7 +210,7 @@ export const selectPostByGtId = wrap<number, Array<Post>>(
   },
 );
 
-export const selectPostsByUserId = wrap<number, Array<Post>>(
+export const selectUserPosts = wrap<number, Array<Post>>(
   async (client, userId) => {
     const result = await client.queryObject<Post>(
       `
@@ -223,7 +223,7 @@ export const selectPostsByUserId = wrap<number, Array<Post>>(
   },
 );
 
-export const selectPostByLtIdUserId = wrap<
+export const selectUserPostByLtId = wrap<
   { ltId: number; userId: number },
   Array<Post>
 >(async (client, params) => {
@@ -240,7 +240,7 @@ export const selectPostByLtIdUserId = wrap<
   return result.rows;
 });
 
-export const selectPostByGtIdUserId = wrap<
+export const selectUserPostByGtId = wrap<
   { gtId: number; userId: number },
   Array<Post>
 >(async (client, params) => {
@@ -258,7 +258,7 @@ export const selectPostByGtIdUserId = wrap<
   return result.rows;
 });
 
-export const selectPostsByFollowingUserIds = wrap<number, Array<Post>>(
+export const selectFollowingUsersPosts = wrap<number, Array<Post>>(
   async (client, userId) => {
     const result = await client.queryObject<Post>(
       `
@@ -271,7 +271,7 @@ export const selectPostsByFollowingUserIds = wrap<number, Array<Post>>(
   },
 );
 
-export const selectPostByLtIdFollowingUserIds = wrap<
+export const selectFollowingUsersPostByLtId = wrap<
   { ltId: number; userId: number },
   Array<Post>
 >(async (client, params) => {
@@ -288,7 +288,7 @@ export const selectPostByLtIdFollowingUserIds = wrap<
   return result.rows;
 });
 
-export const selectPostByGtIdFollowingUserIds = wrap<
+export const selectFollowingUsersPostByGtId = wrap<
   { gtId: number; userId: number },
   Array<Post>
 >(async (client, params) => {

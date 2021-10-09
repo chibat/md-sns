@@ -15,10 +15,6 @@ export default function Edit() {
   console.debug("start", postId, router.routePath);
 
   const user = useContext(UserContext);
-  if (user === null) {
-    router.push(`/`);
-    return;
-  }
 
   const [flag, setFlag] = useState<boolean>(true);
   const [text, setText] = useState<string>("");
@@ -45,10 +41,10 @@ export default function Edit() {
         router.push(`/`);
         return;
       }
-      if (result.user_id !== user?.appId) {
-        router.push(`/`);
-        return;
-      }
+      //if (result.user_id !== user?.appId) {
+      //  router.push(`/`);
+      //  return;
+      //}
       setText(result.source);
     })();
   }, []);
