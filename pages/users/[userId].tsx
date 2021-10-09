@@ -32,6 +32,10 @@ export default function User() {
     (async () => {
       setLoading(true);
       const result = await request<UserRequest, UserResponse>("get_user", { userId });
+      if (!result.user) {
+        router.push("/");
+        return;
+      }
       setPageUser(result.user);
       setFollowing(result.following);
       setFollowers(result.followers);
@@ -113,7 +117,7 @@ export default function User() {
       }
       {!loading &&
         <>
-          <h1><img src={pageUser?.picture} alt="avator" /> {pageUser?.name}</h1>
+          <h1><img src={pageUser?.picture} className="img-thumbnail" alt="" /> {pageUser?.name}</h1>
           {(loginUser && pageUser && pageUser.id !== loginUser.appId) &&
             <>
               {!isFollowing &&
