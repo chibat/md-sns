@@ -145,6 +145,19 @@ const SELECT_POST = `
   LEFT JOIN app_user u ON (p.user_id = u.id)
 `;
 
+export const selectPost = wrap<number, Post | null>(async (
+  client,
+  id,
+) => {
+  const result = await client.queryObject<Post>(
+    `
+      ${SELECT_POST}
+      WHERE p.id=$1`,
+    id,
+  );
+  return result.rowCount ? result.rows[0] : null;
+});
+
 export const selectPosts = wrap<void, Array<Post>>(async (
   client,
   _,
@@ -155,19 +168,6 @@ export const selectPosts = wrap<void, Array<Post>>(async (
   return result.rows;
 });
 
-export const selectPostsByUserId = wrap<number, Array<Post>>(
-  async (client, userId) => {
-    const result = await client.queryObject<Post>(
-      `
-      ${SELECT_POST}
-      WHERE p.user_id = $1
-      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}`,
-      userId,
-    );
-    return result.rows;
-  },
-);
-
 export const selectPostByLtId = wrap<number, Array<Post>>(
   async (client, ltId) => {
     const result = await client.queryObject<Post>(
@@ -176,6 +176,34 @@ export const selectPostByLtId = wrap<number, Array<Post>>(
       WHERE p.id < $1
       ORDER BY p.id DESC LIMIT ${PAGE_ROWS}`,
       ltId,
+    );
+    return result.rows;
+  },
+);
+
+export const selectPostByGtId = wrap<number, Array<Post>>(
+  async (client, gtId) => {
+    const result = await client.queryObject<Post>(
+      `SELECT * FROM (
+        ${SELECT_POST}
+        WHERE p.id > $1
+        ORDER BY p.id LIMIT ${PAGE_ROWS}
+      ) s ORDER BY id DESC
+    `,
+      gtId,
+    );
+    return result.rows;
+  },
+);
+
+export const selectPostsByUserId = wrap<number, Array<Post>>(
+  async (client, userId) => {
+    const result = await client.queryObject<Post>(
+      `
+      ${SELECT_POST}
+      WHERE p.user_id = $1
+      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}`,
+      userId,
     );
     return result.rows;
   },
@@ -197,21 +225,6 @@ export const selectPostByLtIdUserId = wrap<
   return result.rows;
 });
 
-export const selectPostByGtId = wrap<number, Array<Post>>(
-  async (client, gtId) => {
-    const result = await client.queryObject<Post>(
-      `SELECT * FROM (
-        ${SELECT_POST}
-        WHERE p.id > $1
-        ORDER BY p.id LIMIT ${PAGE_ROWS}
-      ) s ORDER BY id DESC
-    `,
-      gtId,
-    );
-    return result.rows;
-  },
-);
-
 export const selectPostByGtIdUserId = wrap<
   { gtId: number; userId: number },
   Array<Post>
@@ -227,19 +240,6 @@ export const selectPostByGtIdUserId = wrap<
     params.userId,
   );
   return result.rows;
-});
-
-export const selectPost = wrap<number, Post | null>(async (
-  client,
-  id,
-) => {
-  const result = await client.queryObject<Post>(
-    `
-      ${SELECT_POST}
-      WHERE p.id=$1`,
-    id,
-  );
-  return result.rowCount ? result.rows[0] : null;
 });
 
 export const insertComment = wrap<
