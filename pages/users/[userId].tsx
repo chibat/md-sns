@@ -81,7 +81,7 @@ export default function User() {
   async function follow() {
     if (pageUser) {
       setFollowLoading(true);
-      await request<FollowRequest, FollowResponse>("create_follow", { followingId: pageUser.id });
+      await request<FollowRequest, FollowResponse>("create_follow", { followingUserId: pageUser.id });
       setFollowers((Number(following) + 1).toString());
       setIsFollowing(!isFollowing);
       setFollowLoading(false);
@@ -91,7 +91,7 @@ export default function User() {
   async function unfollow() {
     if (pageUser) {
       setFollowLoading(true);
-      await request<UnfollowRequest, UnfollowResponse>("delete_follow", { userId: pageUser.id, });
+      await request<UnfollowRequest, UnfollowResponse>("delete_follow", { followingUserId: pageUser.id, });
       const _following = Number(following) - 1;
       setFollowers((_following < 0 ? 0 : _following).toString());
       setIsFollowing(!isFollowing);
@@ -119,7 +119,7 @@ export default function User() {
               {!isFollowing &&
                 <button className="btn btn-secondary me-2 mb-2" onClick={follow} style={{ width: "150px" }} disabled={followLoading}>
                   {followLoading &&
-                    <div className="spinner-border" role="status">
+                    <div className="spinner-border spinner-border-sm me-2" role="status">
                       <span className="visually-hidden">Loading...</span>
                     </div>
                   }
@@ -131,7 +131,7 @@ export default function User() {
                   Following
                   <button className="btn btn-danger ms-2 me-2 mb-2" onClick={unfollow} style={{ width: "150px" }} disabled={followLoading}>
                     {followLoading &&
-                      <div className="spinner-border" role="status">
+                      <div className="spinner-border spinner-border-sm me-2" role="status">
                         <span className="visually-hidden">Loading...</span>
                       </div>
                     }

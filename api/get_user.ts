@@ -30,7 +30,7 @@ export const handler: APIHandler = async ({ request, response }) => {
       if (loginUser) {
         return await judgeFollowing({
           userId: loginUser.id,
-          following: params.userId,
+          followingUserId: params.userId,
         });
       }
     }

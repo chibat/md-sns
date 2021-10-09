@@ -284,20 +284,20 @@ export const deleteComment = wrap<{ id: number; userId: number }, void>(
   },
 );
 
-export const insertFollow = wrap<{ userId: number; following: number }, void>(
+export const insertFollow = wrap<{ userId: number; followingUserId: number }, void>(
   async (client, params) => {
     await client.queryObject<void>`
-      INSERT INTO follow (user_id, following)
-      VALUES (${params.userId}, ${params.following})
+      INSERT INTO follow (user_id, following_user_id)
+      VALUES (${params.userId}, ${params.followingUserId})
     `;
   },
 );
 
-export const deleteFollow = wrap<{ userId: number; following: number }, void>(
+export const deleteFollow = wrap<{ userId: number; followingUserId: number }, void>(
   async (client, params) => {
     await client.queryObject<void>`
       DELETE FROM follow
-      WHERE user_id = ${params.userId} and following = ${params.following}
+      WHERE user_id = ${params.userId} and following_user_id = ${params.followingUserId}
     `;
   },
 );
@@ -308,19 +308,19 @@ export const selectFollowingUsers = wrap<number, Array<AppUser>>(
       SELECT *
       FROM app_user
       WHERE id
-      IN (SELECT following FROM follow WHERE user_id = ${userId} ORDER BY created_at DESC)
+      IN (SELECT following_user_id FROM follow WHERE user_id = ${userId} ORDER BY created_at DESC)
     `;
     return result.rows;
   },
 );
 
 export const selectFollowerUsers = wrap<number, Array<AppUser>>(
-  async (client, userId) => {
+  async (client, followingUserId) => {
     const result = await client.queryObject<AppUser>`
       SELECT *
       FROM app_user
       WHERE id
-      IN (SELECT user_id FROM follow WHERE following = ${userId} ORDER BY created_at DESC)
+      IN (SELECT user_id FROM follow WHERE following_user_id = ${followingUserId} ORDER BY created_at DESC)
     `;
     return result.rows;
   },
@@ -332,28 +332,28 @@ export const selectCountFollowing = wrap<number, string>(
       SELECT count(*) || '' as cnt
       FROM app_user
       WHERE id
-      IN (SELECT following FROM follow WHERE user_id = ${userId} ORDER BY created_at DESC)
+      IN (SELECT following_user_id FROM follow WHERE user_id = ${userId} ORDER BY created_at DESC)
     `;
     return result.rows[0].cnt;
   },
 );
 
 export const selectCountFollower = wrap<number, string>(
-  async (client, userId) => {
+  async (client, followingUserId) => {
     const result = await client.queryObject<{cnt: string}>`
       SELECT count(*) || '' as cnt
       FROM app_user
       WHERE id
-      IN (SELECT user_id FROM follow WHERE following = ${userId} ORDER BY created_at DESC)
+      IN (SELECT user_id FROM follow WHERE following_user_id = ${followingUserId} ORDER BY created_at DESC)
     `;
     return result.rows[0].cnt;
   },
 );
 
-export const judgeFollowing = wrap<{userId: number, following: number}, boolean>(
+export const judgeFollowing = wrap<{userId: number, followingUserId: number}, boolean>(
   async (client, params) => {
     const result = await client.queryObject<{cnt: string}>`
-      SELECT 1 FROM follow WHERE user_id = ${params.userId} AND following = ${params.following}
+      SELECT 1 FROM follow WHERE user_id = ${params.userId} AND following_user_id = ${params.followingUserId}
     `;
     return result.rows.length === 1;
   },

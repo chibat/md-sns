@@ -34,9 +34,9 @@ CREATE INDEX comment_post_id ON comment(post_id);
 DROP TABLE follow;
 CREATE TABLE follow (
  user_id INTEGER REFERENCES app_user(id) ON DELETE CASCADE,
- following INTEGER,
+ following_user_id INTEGER,
  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
- PRIMARY KEY (user_id, following)
+ PRIMARY KEY (user_id, following_user_id)
 );
 

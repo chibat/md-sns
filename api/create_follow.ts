@@ -2,7 +2,7 @@ import type { APIHandler } from "aleph/types.d.ts";
 import { insertFollow, selectUserByGoogleId } from "~/lib/db.ts";
 import { getGoogleUser } from "~/lib/auth.ts";
 
-export type RequestType = { followingId: number; };
+export type RequestType = { followingUserId: number; };
 export type ResponseType = {};
 
 export const handler: APIHandler = async ({ response, request }) => {
@@ -20,7 +20,7 @@ export const handler: APIHandler = async ({ response, request }) => {
     if (user) {
       await insertFollow({
         userId: user.id,
-        following: requestJson.followingId,
+        followingUserId: requestJson.followingUserId,
       });
       const responseJson: ResponseType = {};
       response.json(responseJson);

@@ -2,7 +2,7 @@ import type { APIHandler } from "aleph/types.d.ts";
 import { deleteFollow, selectUserByGoogleId } from "~/lib/db.ts";
 import { getGoogleUser } from "~/lib/auth.ts";
 
-export type RequestType = { userId: number };
+export type RequestType = { followingUserId: number };
 export type ResponseType = {};
 
 export const handler: APIHandler = async ({ response, request }) => {
@@ -16,7 +16,7 @@ export const handler: APIHandler = async ({ response, request }) => {
   const user = await selectUserByGoogleId(googleUser.id);
   const requestJson: RequestType = await request.json();
   if (requestJson && user) {
-    await deleteFollow({ userId: user.id, following: requestJson.userId });
+    await deleteFollow({ userId: user.id, followingUserId: requestJson.followingUserId });
     response.json({});
     return;
   }
