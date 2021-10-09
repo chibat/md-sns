@@ -46,7 +46,7 @@ const pool = new Pool(dbUrl, POOL_CONNECTIONS);
 
 type ExecuteType<P, R> = (client: PoolClient, params: P) => Promise<R>;
 
-function wrap<P, R>(execute: ExecuteType<P, R>) {
+function usePool<P, R>(execute: ExecuteType<P, R>) {
   return async (params: P): Promise<R> => {
     console.log(`pool size: ${pool.size}`);
     const client = await pool.connect();
@@ -75,7 +75,7 @@ function wrap<P, R>(execute: ExecuteType<P, R>) {
   };
 }
 
-export const upsertUser = wrap<
+export const upsertUser = usePool<
   { googleId: string; name: string; picture: string },
   number
 >(async (client, params) => {
@@ -89,7 +89,7 @@ export const upsertUser = wrap<
   return result.rows[0].id;
 });
 
-export const updateUser = wrap<
+export const updateUser = usePool<
   { id: number; name: string; picture: string },
   void
 >(async (client, params) => {
@@ -102,7 +102,7 @@ export const updateUser = wrap<
   return;
 });
 
-export const selectUserByGoogleId = wrap<string, AppUser | null>(
+export const selectUserByGoogleId = usePool<string, AppUser | null>(
   async (client, googleId) => {
     const result = await client.queryObject<AppUser>`
       SELECT * FROM app_user WHERE google_id=${googleId}`;
@@ -110,7 +110,7 @@ export const selectUserByGoogleId = wrap<string, AppUser | null>(
   },
 );
 
-export const selectUser = wrap<number, AppUser | null>(
+export const selectUser = usePool<number, AppUser | null>(
   async (client, userId) => {
     const result = await client.queryObject<AppUser>`
       SELECT * FROM app_user WHERE id = ${userId}
@@ -119,7 +119,7 @@ export const selectUser = wrap<number, AppUser | null>(
   },
 );
 
-export const insertPost = wrap<
+export const insertPost = usePool<
   { userId: number; source: string },
   number
 >(async (client, params) => {
@@ -131,7 +131,7 @@ export const insertPost = wrap<
   return result.rows[0].id;
 });
 
-export const updatePost = wrap<
+export const updatePost = usePool<
   { postId: number; userId: number; source: string },
   void
 >(async (client, params) => {
@@ -142,7 +142,7 @@ export const updatePost = wrap<
     `;
 });
 
-export const deletePost = wrap<{ id: number; userId: number }, void>(
+export const deletePost = usePool<{ id: number; userId: number }, void>(
   async (client, params) => {
     await client.queryObject`
       DELETE FROM post where id = ${params.id} and user_id = ${params.userId}
@@ -159,7 +159,7 @@ const SELECT_POST = `
   LEFT JOIN app_user u ON (p.user_id = u.id)
 `;
 
-export const selectPost = wrap<number, Post | null>(async (
+export const selectPost = usePool<number, Post | null>(async (
   client,
   id,
 ) => {
@@ -172,7 +172,7 @@ export const selectPost = wrap<number, Post | null>(async (
   return result.rowCount ? result.rows[0] : null;
 });
 
-export const selectPosts = wrap<void, Array<Post>>(async (
+export const selectPosts = usePool<void, Array<Post>>(async (
   client,
   _,
 ) => {
@@ -182,7 +182,7 @@ export const selectPosts = wrap<void, Array<Post>>(async (
   return result.rows;
 });
 
-export const selectPostByLtId = wrap<number, Array<Post>>(
+export const selectPostByLtId = usePool<number, Array<Post>>(
   async (client, ltId) => {
     const result = await client.queryObject<Post>(
       `
@@ -195,7 +195,7 @@ export const selectPostByLtId = wrap<number, Array<Post>>(
   },
 );
 
-export const selectPostByGtId = wrap<number, Array<Post>>(
+export const selectPostByGtId = usePool<number, Array<Post>>(
   async (client, gtId) => {
     const result = await client.queryObject<Post>(
       `SELECT * FROM (
@@ -210,7 +210,7 @@ export const selectPostByGtId = wrap<number, Array<Post>>(
   },
 );
 
-export const selectUserPosts = wrap<number, Array<Post>>(
+export const selectUserPosts = usePool<number, Array<Post>>(
   async (client, userId) => {
     const result = await client.queryObject<Post>(
       `
@@ -223,7 +223,7 @@ export const selectUserPosts = wrap<number, Array<Post>>(
   },
 );
 
-export const selectUserPostByLtId = wrap<
+export const selectUserPostByLtId = usePool<
   { ltId: number; userId: number },
   Array<Post>
 >(async (client, params) => {
@@ -240,7 +240,7 @@ export const selectUserPostByLtId = wrap<
   return result.rows;
 });
 
-export const selectUserPostByGtId = wrap<
+export const selectUserPostByGtId = usePool<
   { gtId: number; userId: number },
   Array<Post>
 >(async (client, params) => {
@@ -258,7 +258,7 @@ export const selectUserPostByGtId = wrap<
   return result.rows;
 });
 
-export const selectFollowingUsersPosts = wrap<number, Array<Post>>(
+export const selectFollowingUsersPosts = usePool<number, Array<Post>>(
   async (client, userId) => {
     const result = await client.queryObject<Post>(
       `
@@ -271,7 +271,7 @@ export const selectFollowingUsersPosts = wrap<number, Array<Post>>(
   },
 );
 
-export const selectFollowingUsersPostByLtId = wrap<
+export const selectFollowingUsersPostByLtId = usePool<
   { ltId: number; userId: number },
   Array<Post>
 >(async (client, params) => {
@@ -288,7 +288,7 @@ export const selectFollowingUsersPostByLtId = wrap<
   return result.rows;
 });
 
-export const selectFollowingUsersPostByGtId = wrap<
+export const selectFollowingUsersPostByGtId = usePool<
   { gtId: number; userId: number },
   Array<Post>
 >(async (client, params) => {
@@ -306,7 +306,7 @@ export const selectFollowingUsersPostByGtId = wrap<
   return result.rows;
 });
 
-export const insertComment = wrap<
+export const insertComment = usePool<
   { postId: number; userId: number; source: string },
   number
 >(async (client, params) => {
@@ -326,7 +326,7 @@ export const insertComment = wrap<
   return result.rows[0].id;
 });
 
-export const selectComments = wrap<number, Array<Comment>>(
+export const selectComments = usePool<number, Array<Comment>>(
   async (client, postId) => {
     const result = await client.queryObject<Comment>`
       SELECT
@@ -340,7 +340,7 @@ export const selectComments = wrap<number, Array<Comment>>(
   },
 );
 
-export const deleteComment = wrap<{ id: number; userId: number }, void>(
+export const deleteComment = usePool<{ id: number; userId: number }, void>(
   async (client, params) => {
     await client.queryObject`
       DELETE FROM comment where id = ${params.id} and user_id = ${params.userId}
@@ -348,7 +348,7 @@ export const deleteComment = wrap<{ id: number; userId: number }, void>(
   },
 );
 
-export const insertFollow = wrap<
+export const insertFollow = usePool<
   { userId: number; followingUserId: number },
   void
 >(
@@ -360,7 +360,7 @@ export const insertFollow = wrap<
   },
 );
 
-export const deleteFollow = wrap<
+export const deleteFollow = usePool<
   { userId: number; followingUserId: number },
   void
 >(
@@ -372,7 +372,7 @@ export const deleteFollow = wrap<
   },
 );
 
-export const selectFollowingUsers = wrap<number, Array<AppUser>>(
+export const selectFollowingUsers = usePool<number, Array<AppUser>>(
   async (client, userId) => {
     const result = await client.queryObject<AppUser>`
       SELECT *
@@ -384,7 +384,7 @@ export const selectFollowingUsers = wrap<number, Array<AppUser>>(
   },
 );
 
-export const selectFollowerUsers = wrap<number, Array<AppUser>>(
+export const selectFollowerUsers = usePool<number, Array<AppUser>>(
   async (client, followingUserId) => {
     const result = await client.queryObject<AppUser>`
       SELECT *
@@ -396,7 +396,7 @@ export const selectFollowerUsers = wrap<number, Array<AppUser>>(
   },
 );
 
-export const selectCountFollowing = wrap<number, string>(
+export const selectCountFollowing = usePool<number, string>(
   async (client, userId) => {
     const result = await client.queryObject<{ cnt: string }>`
       SELECT count(*) || '' as cnt
@@ -408,7 +408,7 @@ export const selectCountFollowing = wrap<number, string>(
   },
 );
 
-export const selectCountFollower = wrap<number, string>(
+export const selectCountFollower = usePool<number, string>(
   async (client, followingUserId) => {
     const result = await client.queryObject<{ cnt: string }>`
       SELECT count(*) || '' as cnt
@@ -420,7 +420,7 @@ export const selectCountFollower = wrap<number, string>(
   },
 );
 
-export const judgeFollowing = wrap<
+export const judgeFollowing = usePool<
   { userId: number; followingUserId: number },
   boolean
 >(
