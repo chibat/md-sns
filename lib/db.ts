@@ -48,15 +48,29 @@ type ExecuteType<P, R> = (client: PoolClient, params: P) => Promise<R>;
 
 function wrap<P, R>(execute: ExecuteType<P, R>) {
   return async (params: P): Promise<R> => {
+    console.log(`pool size: ${pool.size}`);
     const client = await pool.connect();
     try {
-      return await execute(client, params);
-    } catch (error) {
-      await pool.end();
-      const client = await pool.connect();
-      return await execute(client, params);
-    } finally {
+      const result = await execute(client, params);
       await client.release();
+      return result;
+    } catch (error) {
+      // retry
+      console.log("retry");
+      await client.release();
+      await pool.end();
+      console.log(`pool size: ${pool.size}`);
+      try {
+        const client = await pool.connect();
+        const result = await execute(client, params);
+        await client.release();
+        return result;
+      } catch (error) {
+        await client.release();
+        await pool.end();
+        console.log(`pool size: ${pool.size}`);
+        throw error;
+      }
     }
   };
 }
@@ -334,7 +348,10 @@ export const deleteComment = wrap<{ id: number; userId: number }, void>(
   },
 );
 
-export const insertFollow = wrap<{ userId: number; followingUserId: number }, void>(
+export const insertFollow = wrap<
+  { userId: number; followingUserId: number },
+  void
+>(
   async (client, params) => {
     await client.queryObject<void>`
       INSERT INTO follow (user_id, following_user_id)
@@ -343,7 +360,10 @@ export const insertFollow = wrap<{ userId: number; followingUserId: number }, vo
   },
 );
 
-export const deleteFollow = wrap<{ userId: number; followingUserId: number }, void>(
+export const deleteFollow = wrap<
+  { userId: number; followingUserId: number },
+  void
+>(
   async (client, params) => {
     await client.queryObject<void>`
       DELETE FROM follow
@@ -378,7 +398,7 @@ export const selectFollowerUsers = wrap<number, Array<AppUser>>(
 
 export const selectCountFollowing = wrap<number, string>(
   async (client, userId) => {
-    const result = await client.queryObject<{cnt: string}>`
+    const result = await client.queryObject<{ cnt: string }>`
       SELECT count(*) || '' as cnt
       FROM app_user
       WHERE id
@@ -390,7 +410,7 @@ export const selectCountFollowing = wrap<number, string>(
 
 export const selectCountFollower = wrap<number, string>(
   async (client, followingUserId) => {
-    const result = await client.queryObject<{cnt: string}>`
+    const result = await client.queryObject<{ cnt: string }>`
       SELECT count(*) || '' as cnt
       FROM app_user
       WHERE id
@@ -400,14 +420,14 @@ export const selectCountFollower = wrap<number, string>(
   },
 );
 
-export const judgeFollowing = wrap<{userId: number, followingUserId: number}, boolean>(
+export const judgeFollowing = wrap<
+  { userId: number; followingUserId: number },
+  boolean
+>(
   async (client, params) => {
-    const result = await client.queryObject<{cnt: string}>`
+    const result = await client.queryObject<{ cnt: string }>`
       SELECT 1 FROM follow WHERE user_id = ${params.userId} AND following_user_id = ${params.followingUserId}
     `;
     return result.rows.length === 1;
   },
 );
-
-
-
