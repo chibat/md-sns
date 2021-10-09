@@ -2,7 +2,7 @@
 // server
 
 import { Pool, PoolClient } from "https://deno.land/x/postgres@v0.11.3/mod.ts";
-import { PAGE_ROWS } from '~/lib/constants.ts';
+import { PAGE_ROWS } from "~/lib/constants.ts";
 
 const POOL_CONNECTIONS = 5;
 const dbUrl = Deno.env.get("DATABASE_URL");
@@ -88,14 +88,13 @@ export const updateUser = wrap<
   return;
 });
 
-export const selectUserByGoogleId = wrap<
-  string,
-  AppUser | null
->(async (client, googleId) => {
-  const result = await client.queryObject<AppUser>`
+export const selectUserByGoogleId = wrap<string, AppUser | null>(
+  async (client, googleId) => {
+    const result = await client.queryObject<AppUser>`
       SELECT * FROM app_user WHERE google_id=${googleId}`;
-  return result.rowCount ? result.rows[0] : null;
-});
+    return result.rowCount ? result.rows[0] : null;
+  },
+);
 
 export const selectUser = wrap<number, AppUser | null>(
   async (client, userId) => {
@@ -247,7 +246,6 @@ export const insertComment = wrap<
   { postId: number; userId: number; source: string },
   number
 >(async (client, params) => {
-
   const result = await client.queryObject<{ id: number }>`
       INSERT INTO comment (post_id, user_id, source)
       VALUES (${params.postId}, ${params.userId}, ${params.source})
@@ -285,3 +283,81 @@ export const deleteComment = wrap<{ id: number; userId: number }, void>(
     `;
   },
 );
+
+export const insertFollow = wrap<{ userId: number; following: number }, void>(
+  async (client, params) => {
+    await client.queryObject<void>`
+      INSERT INTO follow (user_id, following)
+      VALUES (${params.userId}, ${params.following})
+    `;
+  },
+);
+
+export const deleteFollow = wrap<{ userId: number; following: number }, void>(
+  async (client, params) => {
+    await client.queryObject<void>`
+      DELETE FROM follow
+      WHERE user_id = ${params.userId} and following = ${params.following}
+    `;
+  },
+);
+
+export const selectFollowingUsers = wrap<number, Array<AppUser>>(
+  async (client, userId) => {
+    const result = await client.queryObject<AppUser>`
+      SELECT *
+      FROM app_user
+      WHERE id
+      IN (SELECT following FROM follow WHERE user_id = ${userId} ORDER BY created_at DESC)
+    `;
+    return result.rows;
+  },
+);
+
+export const selectFollowerUsers = wrap<number, Array<AppUser>>(
+  async (client, userId) => {
+    const result = await client.queryObject<AppUser>`
+      SELECT *
+      FROM app_user
+      WHERE id
+      IN (SELECT user_id FROM follow WHERE following = ${userId} ORDER BY created_at DESC)
+    `;
+    return result.rows;
+  },
+);
+
+export const selectCountFollowing = wrap<number, string>(
+  async (client, userId) => {
+    const result = await client.queryObject<{cnt: string}>`
+      SELECT count(*) || '' as cnt
+      FROM app_user
+      WHERE id
+      IN (SELECT following FROM follow WHERE user_id = ${userId} ORDER BY created_at DESC)
+    `;
+    return result.rows[0].cnt;
+  },
+);
+
+export const selectCountFollower = wrap<number, string>(
+  async (client, userId) => {
+    const result = await client.queryObject<{cnt: string}>`
+      SELECT count(*) || '' as cnt
+      FROM app_user
+      WHERE id
+      IN (SELECT user_id FROM follow WHERE following = ${userId} ORDER BY created_at DESC)
+    `;
+    return result.rows[0].cnt;
+  },
+);
+
+export const judgeFollowing = wrap<{userId: number, following: number}, boolean>(
+  async (client, params) => {
+    const result = await client.queryObject<{cnt: string}>`
+      SELECT 1 FROM follow WHERE user_id = ${params.userId} AND following = ${params.following}
+    `;
+    return result.rows.length === 1;
+  },
+);
+
+
+
