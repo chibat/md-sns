@@ -113,7 +113,7 @@ export default function User() {
       }
       {!loading &&
         <>
-          <h1>{pageUser?.name}</h1>
+          <h1><img src={pageUser?.picture} alt="avator" /> {pageUser?.name}</h1>
           {(loginUser && pageUser && pageUser.id !== loginUser.appId) &&
             <>
               {!isFollowing &&

@@ -216,11 +216,12 @@ export const selectPostByLtIdUserId = wrap<
   const result = await client.queryObject<Post>(
     `
       ${SELECT_POST}
-      WHERE p.id < $1 and p.user_id = $2
+      WHERE p.user_id = $1
+      AND p.id < $2
       ORDER BY p.id DESC LIMIT ${PAGE_ROWS}
     `,
-    params.ltId,
     params.userId,
+    params.ltId,
   );
   return result.rows;
 });
@@ -232,12 +233,61 @@ export const selectPostByGtIdUserId = wrap<
   const result = await client.queryObject<Post>(
     `SELECT * FROM (
         ${SELECT_POST}
-        WHERE p.id > $1 AND p.user_id = $2
+        WHERE p.user_id = $1
+        AND p.id > $2
         ORDER BY p.id LIMIT ${PAGE_ROWS}
       ) s ORDER BY id DESC
     `,
-    params.gtId,
     params.userId,
+    params.gtId,
+  );
+  return result.rows;
+});
+
+export const selectPostsByFollowingUserIds = wrap<number, Array<Post>>(
+  async (client, userId) => {
+    const result = await client.queryObject<Post>(
+      `
+      ${SELECT_POST}
+      WHERE p.user_id IN (SELECT following_user_id FROM follow WHERE user_id = $1)
+      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}`,
+      userId,
+    );
+    return result.rows;
+  },
+);
+
+export const selectPostByLtIdFollowingUserIds = wrap<
+  { ltId: number; userId: number },
+  Array<Post>
+>(async (client, params) => {
+  const result = await client.queryObject<Post>(
+    `
+      ${SELECT_POST}
+      WHERE p.user_id IN (SELECT following_user_id FROM follow WHERE user_id = $1)
+      AND p.id < $2
+      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}
+    `,
+    params.userId,
+    params.ltId,
+  );
+  return result.rows;
+});
+
+export const selectPostByGtIdFollowingUserIds = wrap<
+  { gtId: number; userId: number },
+  Array<Post>
+>(async (client, params) => {
+  const result = await client.queryObject<Post>(
+    `SELECT * FROM (
+        ${SELECT_POST}
+        WHERE p.user_id IN (SELECT following_user_id FROM follow WHERE user_id = $1)
+        AND p.id > $2
+        ORDER BY p.id LIMIT ${PAGE_ROWS}
+      ) s ORDER BY id DESC
+    `,
+    params.userId,
+    params.gtId,
   );
   return result.rows;
 });
