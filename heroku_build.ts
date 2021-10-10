@@ -52,3 +52,13 @@ await deno({
   ],
 });
 
+await deno({
+  command: "cache",
+  args: [
+    "--import-map=import_map.json",
+    "--unstable",
+    "lib/db.ts",
+  ],
+});
+
+
