@@ -40,3 +40,14 @@ CREATE TABLE follow (
  PRIMARY KEY (user_id, following_user_id)
 );
 
+DROP TABLE notification;
+CREATE TABLE notification (
+ id SERIAL PRIMARY KEY,
+ user_id INTEGER REFERENCES app_user(id) ON DELETE CASCADE,
+ post_id INTEGER REFERENCES post(id) ON DELETE CASCADE,
+ follower_user_id INTEGER REFERENCES app_user(id) ON DELETE CASCADE,
+ updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+ created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX notification_user_id ON notification(user_id);
+
