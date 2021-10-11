@@ -9,9 +9,8 @@ import type { RequestType, ResponseType } from "~/api/get_posts.ts";
 
 export default function User() {
   const router = useRouter();
-  const userId = Number(router.params.userId);
 
-  console.debug("start ", userId);
+  console.debug("start ");
 
   const [posts, setPosts] = useState<Array<Post>>([]);
   const [previousButton, setPreviousButton] = useState<boolean>(false);
@@ -21,7 +20,7 @@ export default function User() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const results = await request<RequestType, ResponseType>("get_posts", { userId, followig: true });
+      const results = await request<RequestType, ResponseType>("get_posts", { followig: true });
       setPosts(results);
       if (results.length < PAGE_ROWS) {
         setPreviousButton(false);
@@ -36,7 +35,7 @@ export default function User() {
   async function previous() {
     setLoading(true);
     const postId = posts[0].id;
-    const results = await request<RequestType, ResponseType>("get_posts", { postId, userId, direction: "previous", followig: true });
+    const results = await request<RequestType, ResponseType>("get_posts", { postId, direction: "previous", followig: true });
     if (results.length > 0) {
       setPosts(results);
       setNextButton(true);
@@ -51,7 +50,7 @@ export default function User() {
   async function next() {
     setLoading(true);
     const postId = posts[posts.length - 1].id;
-    const results = await request<RequestType, ResponseType>("get_posts", { postId, userId, direction: "next", followig: true });
+    const results = await request<RequestType, ResponseType>("get_posts", { postId, direction: "next", followig: true });
     if (results.length > 0) {
       setPosts(results);
       setPreviousButton(true);
