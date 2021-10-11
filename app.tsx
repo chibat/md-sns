@@ -15,6 +15,7 @@ export default function App(
   console.debug("start");
 
   const [authInfo, setAuthInfo] = useState<AuthInfo>();
+  const [notification, setNotification] = useState<boolean>();
 
   function signin() {
     if (authInfo && authInfo.authUrl) {
@@ -53,7 +54,7 @@ export default function App(
         <header className="py-3 mb-3 border-bottom bg-white">
           <div className="container-fluid d-grid gap-3 align-items-center" style={{ gridTemplateColumns: "1fr 2fr" }}>
             <div>
-            <a className="fs-4 me-3 noDecoration" href="#" onClick={goTop}>md-sns</a>
+              <a className="fs-4 me-3 noDecoration" href="#" onClick={goTop}>md-sns</a>
               <a className="me-3 noDecoration" href="/">All</a>
               {authInfo && authInfo.loginUser &&
                 <a className="me-3 noDecoration" href={`/following/${authInfo.loginUser.appId}`}>Following</a>
@@ -61,6 +62,14 @@ export default function App(
             </div>
             <div className="d-flex align-items-center ms-auto">
               <a className="me-3 noDecoration" href="/about">About</a>
+              <a href="">
+              {!notification &&
+                <img alt="bell" src="/assets/img/bell.png" width="20px" className="me-3" />
+              }
+              {notification &&
+                <img alt="bell" src="/assets/img/bell2.png" width="20px" className="me-3" />
+              }
+              </a>
               {authInfo && authInfo.loginUser &&
                 <div className="flex-shrink-0 dropdown">
                   <a href="#" className="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
