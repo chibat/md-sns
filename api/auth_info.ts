@@ -13,10 +13,9 @@ export const handler: APIHandler = async ({ request, response }) => {
 
   const googleUser = await getGoogleUser(request, response);
   if (googleUser) {
-    const appId = await getAppId(googleUser);
+    const userId = await getAppId(googleUser);
     const loginUser: LoginUser = {
-      appId,
-      googleId: googleUser.id,
+      userId,
       name: googleUser.name,
       picture: googleUser.picture,
     };

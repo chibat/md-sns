@@ -1,7 +1,6 @@
 
 export type LoginUser = {
-  appId: number;
-  googleId: string;
+  userId: number;
   name: string;
   picture: string
 }
