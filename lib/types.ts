@@ -2,7 +2,8 @@
 export type LoginUser = {
   userId: number;
   name: string;
-  picture: string
+  picture: string;
+  notification: boolean;
 }
 
 export type User = {

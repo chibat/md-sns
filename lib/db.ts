@@ -16,6 +16,7 @@ export type AppUser = {
   google_id?: string;
   name?: string;
   picture?: string;
+  notification: boolean;
   updated_at?: string;
   created_at?: string;
 };
@@ -84,16 +85,16 @@ function usePool<P, R>(execute: ExecuteType<P, R>) {
 
 export const upsertUser = usePool<
   { googleId: string; name: string; picture: string },
-  number
+  AppUser
 >(async (client, params) => {
-  const result = await client.queryObject<{ id: number }>`
+  const result = await client.queryObject<AppUser>`
   INSERT INTO app_user (google_id, name, picture)
   VALUES (${params.googleId}, ${params.name}, ${params.picture})
   ON CONFLICT(google_id)
   DO UPDATE SET google_id=${params.googleId}, name=${params.name}, picture=${params.picture}, updated_at=CURRENT_TIMESTAMP
-  RETURNING id
+  RETURNING *
 `;
-  return result.rows[0].id;
+  return result.rows[0];
 });
 
 export const updateUser = usePool<

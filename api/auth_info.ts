@@ -1,9 +1,9 @@
 import type { APIHandler } from "aleph/types.d.ts";
 import { getAuthUrl, getGoogleUser, GoogleUser } from "~/lib/auth.ts";
-import { selectUserByGoogleId, upsertUser, updateUser } from "~/lib/db.ts";
+import { selectUserByGoogleId, upsertUser, updateUser, AppUser } from "~/lib/db.ts";
 import { LoginUser } from "~/lib/types.ts";
 
-type ResponseType = {
+export type ResponseType = {
   loginUser?: LoginUser;
   authUrl?: string;
 }
@@ -13,11 +13,12 @@ export const handler: APIHandler = async ({ request, response }) => {
 
   const googleUser = await getGoogleUser(request, response);
   if (googleUser) {
-    const userId = await getAppId(googleUser);
+    const user = await getUser(googleUser);
     const loginUser: LoginUser = {
-      userId,
+      userId: user.id,
       name: googleUser.name,
       picture: googleUser.picture,
+      notification: user.notification,
     };
     const responseJson: ResponseType = { loginUser };
     response.json(responseJson);
@@ -29,13 +30,13 @@ export const handler: APIHandler = async ({ request, response }) => {
   response.json(responseJson);
 };
 
-async function getAppId(googleUser: GoogleUser): Promise<number> {
+async function getUser(googleUser: GoogleUser): Promise<AppUser> {
   const user = await selectUserByGoogleId(googleUser.id);
   if (user) {
     if (user.name !== googleUser.name || user.picture !== googleUser.picture) {
       await updateUser({id: user.id, name: googleUser.name, picture: googleUser.picture});
     }
-    return user.id;
+    return user;
   }
   return await upsertUser({
     googleId: googleUser.id,
