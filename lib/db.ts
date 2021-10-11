@@ -42,6 +42,13 @@ export type Comment = {
   picture?: string; // app_user
 };
 
+export type Notification = {
+  id: number;
+  user_id: number;
+  post_id: number;
+  follower_user_id: number;
+};
+
 const pool = new Pool(dbUrl, POOL_CONNECTIONS);
 
 type ExecuteType<P, R> = (client: PoolClient, params: P) => Promise<R>;
@@ -308,22 +315,37 @@ export const selectFollowingUsersPostByGtId = usePool<
 
 export const insertComment = usePool<
   { postId: number; userId: number; source: string },
-  number
+  void
 >(async (client, params) => {
-  const result = await client.queryObject<{ id: number }>`
+  await client.queryObject<{ id: number }>`
       INSERT INTO comment (post_id, user_id, source)
       VALUES (${params.postId}, ${params.userId}, ${params.source})
       RETURNING id
     `;
 
-  await client.queryObject`
-      UPDATE post
-      SET updated_at=CURRENT_TIMESTAMP
-      WHERE id = ${params.postId}
-      RETURNING id
-    `;
+  try {
+    const results = await client.queryObject<
+      { user_id: number; post_id: number }
+    >`
+      INSERT INTO notification (user_id, post_id)
+      SELECT user_id, id FROM post
+      WHERE id=${params.postId} AND user_id != ${params.userId}
+      UNION
+      SELECT DISTINCT user_id, post_id FROM comment
+      WHERE post_id=${params.postId} AND user_id != ${params.userId}
+      RETURNING user_id, post_id
+  `;
 
-  return result.rows[0].id;
+    for (const row of results.rows) {
+      await client.queryObject`
+        UPDATE app_user
+        SET notification = true
+        WHERE id = ${row.user_id}
+  `;
+    }
+  } catch (error) {
+    console.warn(error);
+  }
 });
 
 export const selectComments = usePool<number, Array<Comment>>(
@@ -357,6 +379,21 @@ export const insertFollow = usePool<
       INSERT INTO follow (user_id, following_user_id)
       VALUES (${params.userId}, ${params.followingUserId})
     `;
+
+    try {
+      await client.queryObject<void>`
+      INSERT INTO notification (user_id, follower_user_id)
+      VALUES (${params.followingUserId}, ${params.userId})
+    `;
+
+      await client.queryObject`
+      UPDATE app_user
+      SET notification = true
+      WHERE id = ${params.followingUserId}
+    `;
+    } catch (error) {
+      console.warn(error);
+    }
   },
 );
 
@@ -429,5 +466,29 @@ export const judgeFollowing = usePool<
       SELECT 1 FROM follow WHERE user_id = ${params.userId} AND following_user_id = ${params.followingUserId}
     `;
     return result.rows.length === 1;
+  },
+);
+
+export const selectNotifications = usePool<number, Array<Notification>>(
+  async (client, userId) => {
+    const result = await client.queryObject<Notification>`
+      SELECT *
+      FROM notification
+      WHERE user_id = ${userId}
+      ORDER BY created_at DESC
+      LIMIT 10
+    `;
+
+    try {
+      await client.queryObject`
+        UPDATE app_user
+        SET notification = false
+        WHERE id = ${userId}
+      `;
+    } catch (error) {
+      console.log(error);
+    }
+
+    return result.rows;
   },
 );

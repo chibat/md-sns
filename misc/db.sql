@@ -1,14 +1,16 @@
 DROP TABLE app_user;
 CREATE TABLE app_user (
 id SERIAL PRIMARY KEY,
-google_id text,
-account text,
-name text,
-picture text,
+google_id TEXT,
+account TEXT,
+name TEXT,
+picture TEXT,
+notification BOOLEAN DEFAULT false,
 updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 CONSTRAINT app_user_google_id UNIQUE(google_id)
 );
+ALTER TABLE app_user ADD COLUMN notification BOOLEAN DEFAULT false;
 
 DROP TABLE post;
 CREATE TABLE post (
