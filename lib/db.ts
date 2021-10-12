@@ -43,11 +43,12 @@ export type Comment = {
   picture?: string; // app_user
 };
 
-export type Notification = {
+export type AppNotification = {
   id: number;
   user_id: number;
   post_id: number;
   follower_user_id: number;
+  created_at?: string;
 };
 
 const pool = new Pool(dbUrl, POOL_CONNECTIONS);
@@ -470,9 +471,9 @@ export const judgeFollowing = usePool<
   },
 );
 
-export const selectNotifications = usePool<number, Array<Notification>>(
+export const selectNotifications = usePool<number, Array<AppNotification>>(
   async (client, userId) => {
-    const result = await client.queryObject<Notification>`
+    const result = await client.queryObject<AppNotification>`
       SELECT *
       FROM notification
       WHERE user_id = ${userId}

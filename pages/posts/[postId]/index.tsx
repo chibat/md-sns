@@ -96,7 +96,7 @@ export default function Post() {
                 <a href={`/users/${post.user_id}`} className="ms-2 me-2 noDecoration">{post.name}</a>
                 {post.updated_at}
               </div>
-              {user?.appId === post.user_id &&
+              {user?.userId === post.user_id &&
                 <div>
                   <a href={`/posts/${post.id}/edit`}><img src="/assets/img/pencil-fill.svg" alt="Edit" width="20" height="20"></img></a>
                   <a href="#" className="ms-2" onClick={deletePost}><img src="/assets/img/trash-fill.svg" alt="Delete" width="20" height="20"></img></a>
@@ -115,7 +115,7 @@ export default function Post() {
                       <a href={`/users/${comment.user_id}`} className="ms-2 me-2 noDecoration">{comment.name}</a>
                       {comment.updated_at}
                     </div>
-                    {user?.appId === comment.user_id &&
+                    {user?.userId === comment.user_id &&
                       <a href="#" className="ms-2" onClick={() => deleteComment(comment.id)}><img src="/assets/img/trash-fill.svg" alt="Delete" width="20" height="20"></img></a>
                     }
                   </div>

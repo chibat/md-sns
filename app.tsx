@@ -1,7 +1,8 @@
 import React, { ComponentType } from "react";
 import { AuthInfo } from "~/lib/auth.ts";
-import { useState, useEffect } from 'react'
-import { UserContext } from '~/lib/UserContext.ts'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'aleph/react'
+import { UserContext } from '~/lib/UserContext.ts';
 import { request } from '~/lib/request.ts'
 import 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css';
 import "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.0/styles/tomorrow-night.min.css";
@@ -15,6 +16,7 @@ export default function App(
   { Page, pageProps }: { Page: ComponentType<any>; pageProps: any },
 ) {
   console.debug("start");
+  const router = useRouter();
 
   const [authInfo, setAuthInfo] = useState<AuthInfo>();
   const [notification, setNotification] = useState<boolean>();
@@ -36,6 +38,11 @@ export default function App(
     //  router.push("/");
     //}
     location.href = "/";
+  }
+
+  function goNotification() {
+    router.push("/notification");
+    setNotification(false);
   }
 
   useEffect(() => {
@@ -66,7 +73,7 @@ export default function App(
             </div>
             <div className="d-flex align-items-center ms-auto">
               <a className="me-3 noDecoration" href="/about">About</a>
-              <a href="">
+              <a href="/notification" onClick={goNotification}>
               {!notification &&
                 <img alt="bell" src="/assets/img/bell.png" width="20px" className="me-3" />
               }
