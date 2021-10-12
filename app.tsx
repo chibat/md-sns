@@ -73,25 +73,27 @@ export default function App(
             </div>
             <div className="d-flex align-items-center ms-auto">
               <a className="me-3 noDecoration" href="/about">About</a>
-              <a href="/notification" onClick={goNotification}>
-              {!notification &&
-                <img alt="bell" src="/assets/img/bell.png" width="20px" className="me-3" />
-              }
-              {notification &&
-                <img alt="bell" src="/assets/img/bell2.png" width="20px" className="me-3" />
-              }
-              </a>
               {authInfo && authInfo.loginUser &&
-                <div className="flex-shrink-0 dropdown">
-                  <a href="#" className="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src={authInfo.loginUser.picture} alt="mdo" width="32" height="32" className="rounded-circle" />
+                <>
+                  <a href="/notification" onClick={goNotification}>
+                    {!notification &&
+                      <img alt="bell" src="/assets/img/bell.png" width="20px" className="me-3" />
+                    }
+                    {notification &&
+                      <img alt="bell" src="/assets/img/bell2.png" width="20px" className="me-3" />
+                    }
                   </a>
-                  <ul className="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-                    <li><a className="dropdown-item" href={`/users/${authInfo.loginUser.userId}`}>Profile</a></li>
-                    <li><hr className="dropdown-divider" /></li>
-                    <li><a className="dropdown-item" href="#" onClick={signout}>Sign out</a></li>
-                  </ul>
-                </div>
+                  <div className="flex-shrink-0 dropdown">
+                    <a href="#" className="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+                      <img src={authInfo.loginUser.picture} alt="mdo" width="32" height="32" className="rounded-circle" />
+                    </a>
+                    <ul className="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+                      <li><a className="dropdown-item" href={`/users/${authInfo.loginUser.userId}`}>Profile</a></li>
+                      <li><hr className="dropdown-divider" /></li>
+                      <li><a className="dropdown-item" href="#" onClick={signout}>Sign out</a></li>
+                    </ul>
+                  </div>
+                </>
               }
             </div>
           </div>
