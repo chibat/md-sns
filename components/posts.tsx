@@ -39,7 +39,7 @@ export default function Posts(props: Props) {
             <div>
               <img src={post.picture} alt="mdo" width="32" height="32" className="rounded-circle" />
               <a href={`/users/${post.user_id}`} className="ms-2 noDecoration">{post.name}</a>
-              <a href={`/posts/${post.id}`} className="ms-2 noDecoration">{post.updated_at}</a>
+              <a href={`/posts/${post.id}`} className="ms-2 noDecoration">{new Date(post.updated_at).toLocaleString()}</a>
             </div>
             {user && user.userId === post.user_id &&
               <div>

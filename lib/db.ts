@@ -25,8 +25,8 @@ export type Post = {
   id: number;
   user_id: number;
   source: string;
-  updated_at?: string;
-  created_at?: string;
+  updated_at: string;
+  created_at: string;
   name?: string; // app_user
   picture?: string; // app_user
   comments?: string; // comment
@@ -37,8 +37,8 @@ export type Comment = {
   post_id: number;
   user_id: number;
   source: string;
-  updated_at?: string;
-  created_at?: string;
+  updated_at: string;
+  created_at: string;
   name?: string; // app_user
   picture?: string; // app_user
 };
@@ -48,7 +48,7 @@ export type AppNotification = {
   user_id: number;
   post_id: number;
   action_user_id: number;
-  created_at?: string;
+  created_at: string;
   name?: string; // app_user
 };
 
