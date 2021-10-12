@@ -12,9 +12,9 @@ export default function Notifications(props: Props) {
       {props.values.map(notification =>
         <div className="mb-1" key={notification.id}>
           <span className="me-3">{notification.created_at}</span>
-          {notification.follower_user_id && <a href={`/users/${notification.follower_user_id}`}>XXXX followed you.</a>
+          {!notification.post_id && <a href={`/users/${notification.action_user_id}`}><b>{notification.name}</b> followed you.</a>
           }
-          {notification.post_id && <a href={`/posts/${notification.post_id}`}>XXXX commented on the post you are related to.</a>
+          {notification.post_id && <a href={`/posts/${notification.post_id}`}><b>{notification.name}</b> commented on the post you are related to.</a>
           }
         </div>
       )}

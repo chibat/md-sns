@@ -92,7 +92,7 @@ export default function UserId() {
     if (pageUser) {
       setFollowLoading(true);
       await request<FollowRequest, FollowResponse>("create_follow", { followingUserId: pageUser.userId });
-      setFollowers((Number(following) + 1).toString());
+      setFollowers((Number(followers) + 1).toString());
       setIsFollowing(!isFollowing);
       setFollowLoading(false);
     }
@@ -102,8 +102,8 @@ export default function UserId() {
     if (pageUser) {
       setFollowLoading(true);
       await request<UnfollowRequest, UnfollowResponse>("delete_follow", { followingUserId: pageUser.userId, });
-      const _following = Number(following) - 1;
-      setFollowers((_following < 0 ? 0 : _following).toString());
+      const _followers = Number(followers) - 1;
+      setFollowers((_followers < 0 ? 0 : _followers).toString());
       setIsFollowing(!isFollowing);
       setFollowLoading(false);
     }
@@ -136,7 +136,7 @@ export default function UserId() {
       {!loading &&
         <>
           <h1><img src={pageUser?.picture} className="img-thumbnail" alt="" /> {pageUser?.name}</h1>
-          {(loginUser && pageUser && pageUser.userId !== loginUser.appId) &&
+          {(loginUser && pageUser && pageUser.userId !== loginUser.userId) &&
             <>
               {!isFollowing &&
                 <button className="btn btn-secondary me-2 mb-2" onClick={follow} style={{ width: "150px" }} disabled={followLoading}>

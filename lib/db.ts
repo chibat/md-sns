@@ -47,8 +47,9 @@ export type AppNotification = {
   id: number;
   user_id: number;
   post_id: number;
-  follower_user_id: number;
+  action_user_id: number;
   created_at?: string;
+  name?: string; // app_user
 };
 
 const pool = new Pool(dbUrl, POOL_CONNECTIONS);
@@ -329,8 +330,8 @@ export const insertComment = usePool<
     const results = await client.queryObject<
       { user_id: number; post_id: number }
     >`
-      INSERT INTO notification (user_id, post_id)
-      SELECT user_id, id FROM post
+      INSERT INTO notification (user_id, post_id, action_user_id)
+      SELECT user_id, id, ${params.userId} FROM post
       WHERE id=${params.postId} AND user_id != ${params.userId}
       UNION
       SELECT DISTINCT user_id, post_id FROM comment
@@ -384,7 +385,7 @@ export const insertFollow = usePool<
 
     try {
       await client.queryObject<void>`
-      INSERT INTO notification (user_id, follower_user_id)
+      INSERT INTO notification (user_id, action_user_id)
       VALUES (${params.followingUserId}, ${params.userId})
     `;
 
@@ -474,8 +475,9 @@ export const judgeFollowing = usePool<
 export const selectNotifications = usePool<number, Array<AppNotification>>(
   async (client, userId) => {
     const result = await client.queryObject<AppNotification>`
-      SELECT *
-      FROM notification
+      SELECT n.*, u.name
+      FROM notification n
+      LEFT OUTER JOIN app_user U on (n.action_user_id = u.id)
       WHERE user_id = ${userId}
       ORDER BY created_at DESC
       LIMIT 10
