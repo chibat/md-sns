@@ -41,7 +41,7 @@ export default function Edit() {
         router.push(`/`);
         return;
       }
-      //if (result.user_id !== user?.appId) {
+      //if (result.user_id !== user?.userId) {
       //  router.push(`/`);
       //  return;
       //}

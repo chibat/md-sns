@@ -41,7 +41,7 @@ export default function Posts(props: Props) {
               <a href={`/users/${post.user_id}`} className="ms-2 noDecoration">{post.name}</a>
               <a href={`/posts/${post.id}`} className="ms-2 noDecoration">{post.updated_at}</a>
             </div>
-            {user && user.appId === post.user_id &&
+            {user && user.userId === post.user_id &&
               <div>
                 <a href={`/posts/${post.id}/edit`}><img src="/assets/img/pencil-fill.svg" alt="Edit" width="20" height="20"></img></a>
                 <a href="#" className="ms-2" onClick={() => deletePost(post.id)}><img src="/assets/img/trash-fill.svg" alt="Delete" width="20" height="20"></img></a>
