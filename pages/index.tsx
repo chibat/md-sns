@@ -70,8 +70,10 @@ export default function Home() {
 
   return (
     <>
-      <head>
+      <head prefix="og: http://ogp.me/ns# website: http://ogp.me/ns/website#">
         <title>md-sns</title>
+        <meta property="og:url" content="https://md-sns.herokuapp.com/"></meta>
+        <meta property="og:title" content="md-sns"></meta>
       </head>
       {user &&
         <div className="card mb-3">
