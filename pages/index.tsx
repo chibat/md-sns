@@ -74,6 +74,9 @@ export default function Home() {
         <title>md-sns</title>
         <meta property="og:url" content="https://md-sns.herokuapp.com/"></meta>
         <meta property="og:title" content="md-sns"></meta>
+        <meta name="twitter:card" content="summary"></meta>
+        <meta name="twitter:site" content="@tomofummy" />
+        <meta name="twitter:creator" content="@tomofummy" />
       </head>
       {user &&
         <div className="card mb-3">
