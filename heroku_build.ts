@@ -1,8 +1,8 @@
 #!/usr/bin/env -S deno run -A --unstable
 
-import { deno, denoDir } from "./tasks_utils.ts";
+import { deno, $ } from "./tasks_utils.ts";
 
-const COMMAND_PATH="https://deno.land/x/aleph@v0.3.0-beta.19/commands";
+const COMMAND_PATH = "https://deno.land/x/aleph@v0.3.0-beta.19/commands";
 
 const home = Deno.env.get("HOME");
 if (!home) {
@@ -10,9 +10,10 @@ if (!home) {
   Deno.exit(1);
 }
 
-const esbuild = `${home}/.cache/esbuild/bin/esbuild-linux-64@0.13.2`;
+await $(["sh", "-c", "deno cache --import-map=import_map.json *.ts */*.ts"]);
 
 /*
+const esbuild = `${home}/.cache/esbuild/bin/esbuild-linux-64@0.13.2`;
 await deno({
   command: "run",
   "--allow-net": [
@@ -62,5 +63,3 @@ await deno({
     "lib/db.ts",
   ],
 });
-
-
