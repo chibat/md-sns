@@ -10,7 +10,7 @@ if (!home) {
   Deno.exit(1);
 }
 
-await $(["bash", "-c", "deno cache --import-map=import_map.json *.ts */*.ts"]);
+await $(["bash", "-c", `${Deno.execPath()} cache --import-map=import_map.json *.ts */*.ts`]);
 
 /*
 const esbuild = `${home}/.cache/esbuild/bin/esbuild-linux-64@0.13.2`;
