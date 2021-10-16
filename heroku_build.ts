@@ -12,6 +12,7 @@ if (!home) {
 
 const esbuild = `${home}/.cache/esbuild/bin/esbuild-linux-64@0.13.2`;
 
+/*
 await deno({
   command: "run",
   "--allow-net": [
@@ -51,6 +52,7 @@ await deno({
     `${COMMAND_PATH}/build.ts`,
   ],
 });
+*/
 
 await deno({
   command: "cache",
