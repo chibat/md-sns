@@ -3,13 +3,13 @@ import { useEffect, useContext, useState } from 'react'
 import hljs from 'https://esm.sh/highlight.js';
 import marked from 'https://esm.sh/marked@2.0.1';
 import { UserContext } from '~/lib/UserContext.ts'
-import { useRouter } from 'aleph/react'
+import { useRouter, useDeno } from 'aleph/react'
 import { request } from '~/lib/request.ts'
-import type { RequestType, ResponseType } from "~/api/get_post.ts";
 import type { RequestType as DeleteRequest, ResponseType as DeleteResponse } from "~/api/delete_post.ts";
 import type { RequestType as CreateRequest, ResponseType as CreateResponse } from "~/api/create_comment.ts";
 import type { RequestType as CommentsRequest, ResponseType as CommentsResponse } from "~/api/get_comments.ts";
 import type { RequestType as DeleteCommentRequest, ResponseType as DeleteCommentResponse } from "~/api/delete_comment.ts";
+import { selectPost } from "~/lib/db.ts";
 
 export default function Post() {
 
@@ -21,7 +21,6 @@ export default function Post() {
 
   const [flag, setFlag] = useState<boolean>(true);
   const [source, setSource] = useState<string>("");
-  const [post, setPost] = useState<ResponseType>();
   const [comments, setComments] = useState<CommentsResponse>();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -60,15 +59,13 @@ export default function Post() {
     setLoading(false);
   }
 
+  const post = useDeno(async () => {
+      return await selectPost(postId);
+  });
+
   useEffect(() => {
     console.debug("useEffect");
     (async () => {
-      const result = await request<RequestType, ResponseType>("get_post", { postId });
-      if (!result) {
-        router.push("/");
-        return;
-      }
-      setPost(result);
       await readComments();
     })();
   }, []);
