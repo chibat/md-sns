@@ -53,3 +53,12 @@ CREATE TABLE notification (
 );
 CREATE INDEX notification_user_id ON notification(user_id);
 
+DROP TABLE likes;
+CREATE TABLE likes (
+ user_id INTEGER REFERENCES app_user(id) ON DELETE CASCADE,
+ post_id INTEGER REFERENCES post(id) ON DELETE CASCADE,
+ updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+ created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+ PRIMARY KEY (user_id, post_id)
+);
+
