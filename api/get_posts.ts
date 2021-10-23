@@ -6,10 +6,10 @@ import {
   selectPostByGtId,
   selectPostByLtId,
   selectPosts,
+  selectUserByGoogleId,
   selectUserPostByGtId,
   selectUserPostByLtId,
   selectUserPosts,
-  selectUserByGoogleId,
 } from "~/lib/db.ts";
 
 import type { Post } from "~/lib/db.ts";
@@ -23,59 +23,61 @@ export type RequestType = {
 };
 export type ResponseType = Array<Post>;
 
-async function execute(params: RequestType, request: Request, response: APIResponse): Promise<ResponseType> {
+async function execute(
+  params: RequestType,
+  request: Request,
+  response: APIResponse,
+): Promise<ResponseType> {
   console.log(JSON.stringify(params));
 
-  if (params.userId) {
-    // specified user only
-    if (params.direction === "next" && params.postId) {
-      return await selectUserPostByLtId({
-        ltId: params.postId,
-        userId: params.userId,
-      });
-    } else if (params.direction === "previous" && params.postId) {
-      const result = await selectUserPostByGtId({
-        gtId: params.postId,
-        userId: params.userId,
-      });
-      return result;
-    }
-    return await selectUserPosts(params.userId);
-  } else if (params.followig) {
-    // following user only
-    const googleUser = await getGoogleUser(request, response);
-    if (!googleUser) {
-      return [];
-    }
-    const user = await selectUserByGoogleId(googleUser.id);
-    if (!user) {
-      return [];
-    }
-    const userId = user.id;
-    if (params.direction === "next" && params.postId) {
-      return await selectFollowingUsersPostByLtId({
-        ltId: params.postId,
-        userId,
-      });
-    } else if (params.direction === "previous" && params.postId) {
-      const result = await selectFollowingUsersPostByGtId({
-        gtId: params.postId,
-        userId,
-      });
-      return result;
-    }
-    return await selectFollowingUsersPosts(userId);
-  }
+  const googleUser = await getGoogleUser(request, response);
+  const user = googleUser ? await selectUserByGoogleId(googleUser.id) : null;
 
-  // all user
-  if (params.direction === "next" && params.postId) {
-    const result = await selectPostByLtId(params.postId);
-    return result;
-  } else if (params.direction === "previous" && params.postId) {
-    const result = await selectPostByGtId(params.postId);
-    return result;
-  }
-  return await selectPosts();
+  const posts = await (() => {
+    if (params.userId) {
+      // specified user only
+      if (params.direction === "next" && params.postId) {
+        return selectUserPostByLtId({
+          ltId: params.postId,
+          userId: params.userId,
+        });
+      } else if (params.direction === "previous" && params.postId) {
+        return selectUserPostByGtId({
+          gtId: params.postId,
+          userId: params.userId,
+        });
+      }
+      return selectUserPosts(params.userId);
+    } else if (params.followig) {
+      // following user only
+      if (!user) {
+        return [];
+      }
+      const userId = user.id;
+      if (params.direction === "next" && params.postId) {
+        return selectFollowingUsersPostByLtId({
+          ltId: params.postId,
+          userId,
+        });
+      } else if (params.direction === "previous" && params.postId) {
+        return selectFollowingUsersPostByGtId({
+          gtId: params.postId,
+          userId,
+        });
+      }
+      return selectFollowingUsersPosts(userId);
+    } else {
+      // all user
+      if (params.direction === "next" && params.postId) {
+        return selectPostByLtId(params.postId);
+      } else if (params.direction === "previous" && params.postId) {
+        return selectPostByGtId(params.postId);
+      }
+      return selectPosts();
+    }
+  })();
+
+  return posts;
 }
 
 export const handler: APIHandler = async ({ request, response }) => {

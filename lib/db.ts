@@ -496,3 +496,60 @@ export const selectNotifications = usePool<number, Array<AppNotification>>(
     return result.rows;
   },
 );
+
+export const insertLike = usePool<
+  { userId: number; postId: number },
+  void
+>(
+  async (client, params) => {
+    await client.queryObject<void>`
+      INSERT INTO likes (user_id, post_id)
+      VALUES (${params.userId}, ${params.postId})
+    `;
+
+    try {
+      await client.queryObject`
+      UPDATE post
+      SET likes = likes + 1
+      WHERE id = ${params.postId}
+    `;
+    } catch (error) {
+      console.warn(error);
+    }
+  },
+);
+
+export const deleteLike = usePool<
+  { userId: number; postId: number },
+  void
+>(
+  async (client, params) => {
+    await client.queryObject<void>`
+      DELETE FROM likes
+      WHERE user_id = ${params.userId} AND post_id = ${params.postId}
+    `;
+
+    try {
+      await client.queryObject`
+      UPDATE post
+      SET likes = likes - 1
+      WHERE id = ${params.postId}
+    `;
+    } catch (error) {
+      console.warn(error);
+    }
+  },
+);
+
+export const selectLikes = usePool<{userId: number, postIds: number[]}, number[]>(
+  async (client, {userId, postIds}) => {
+    const result = await client.queryObject<{post_id: number}>`
+      SELECT post_id
+      FROM likes p
+      WHERE user_id = ${userId}
+      AND post_id IN ${postIds}
+    `;
+
+    return result.rows.map(row => row.post_id);
+  },
+);
