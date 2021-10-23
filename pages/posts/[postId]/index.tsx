@@ -10,6 +10,9 @@ import type { RequestType as DeleteRequest, ResponseType as DeleteResponse } fro
 import type { RequestType as CreateRequest, ResponseType as CreateResponse } from "~/api/create_comment.ts";
 import type { RequestType as CommentsRequest, ResponseType as CommentsResponse } from "~/api/get_comments.ts";
 import type { RequestType as DeleteCommentRequest, ResponseType as DeleteCommentResponse } from "~/api/delete_comment.ts";
+import type { ResponsePost } from "~/lib/types.ts";
+import type { RequestType as LikeRequest, ResponseType as LikeResponse } from "~/api/create_like.ts";
+import type { RequestType as CancelLikeRequest, ResponseType as CancelLikeResponse } from "~/api/delete_like.ts";
 
 export default function Post() {
 
@@ -21,9 +24,10 @@ export default function Post() {
 
   const [flag, setFlag] = useState<boolean>(true);
   const [source, setSource] = useState<string>("");
-  const [post, setPost] = useState<ResponseType>();
+  const [post, setPost] = useState<ResponsePost>();
   const [comments, setComments] = useState<CommentsResponse>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [requesting, setRequesting] = useState<boolean>(false);
 
   function displayEdit() {
     setFlag(true);
@@ -60,10 +64,26 @@ export default function Post() {
     setLoading(false);
   }
 
+  async function like(post: ResponsePost) {
+    setRequesting(true);
+    await request<LikeRequest, LikeResponse>("create_like", { postId: post.id });
+    post.liked = true;
+    post.likes = "" + (Number(post.likes) + 1);
+    setRequesting(false);
+  }
+
+  async function cancelLike(post: ResponsePost) {
+    setRequesting(true);
+    await request<CancelLikeRequest, CancelLikeResponse>("delete_like", { postId: post.id });
+    post.liked = false;
+    post.likes = "" + (Number(post.likes) - 1);
+    setRequesting(false);
+  }
+
   useEffect(() => {
     console.debug("useEffect");
     (async () => {
-      const result = await request<RequestType, ResponseType>("get_post", { postId });
+      const result = await request<RequestType, ResponsePost>("get_post", { postId });
       if (!result) {
         router.push("/");
         return;
@@ -107,6 +127,17 @@ export default function Post() {
               <span dangerouslySetInnerHTML={{ __html: marked(post.source) }}></span>
             </div>
             <div className="card-footer bg-transparent">
+              <div className="mb-3">
+                {user && !requesting && post.liked &&
+                  <a href={void (0)} onClick={() => cancelLike(post)} className="ms-3"><img src="/assets/img/heart-fill.svg" alt="Edit" width="20" height="20"></img></a>
+                }
+                {user && !requesting && !post.liked &&
+                  <a href={void (0)} onClick={() => like(post)} className="ms-3"><img src="/assets/img/heart.svg" alt="Edit" width="20" height="20"></img></a>
+                }
+                {Number(post.likes) > 0 &&
+                  <span className="ms-2">{post.likes} Like{post.likes === "1" ? "" : "s"}</span>
+                }
+              </div>
               {comments && comments.map(comment =>
                 <div className="border-bottom ms-4">
                   <div className="d-flex justify-content-between">

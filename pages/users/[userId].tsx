@@ -7,7 +7,8 @@ import Users from '~/components/users.tsx'
 import { request } from '~/lib/request.ts';
 import { PAGE_ROWS } from '~/lib/constants.ts';
 import { User } from '~/lib/types.ts';
-import type { RequestType, ResponseType, ResponsePost } from "~/api/get_posts.ts";
+import type { RequestType, ResponseType } from "~/api/get_posts.ts";
+import { ResponsePost } from "~/lib/types.ts";
 import type { RequestType as UserRequest, ResponseType as UserResponse } from "~/api/get_user.ts";
 import type { RequestType as FollowRequest, ResponseType as FollowResponse } from "~/api/create_follow.ts";
 import type { RequestType as UnfollowRequest, ResponseType as UnfollowResponse } from "~/api/delete_follow.ts";

@@ -1,3 +1,4 @@
+import type { Post } from "~/lib/db.ts";
 
 export type LoginUser = {
   userId: number;
@@ -12,12 +13,5 @@ export type User = {
   picture: string
 }
 
-export type Post = {
-  id: number;
-  userId: number;
-  name: string;
-  source: string;
-  picture?: string;
-  updatedAt: string;
-};
+export type ResponsePost = Post & { liked: boolean };
 

@@ -4,11 +4,11 @@ import marked from 'https://esm.sh/marked@2.0.1';
 import hljs from 'https://esm.sh/highlight.js';
 import { UserContext } from '~/lib/UserContext.ts'
 import { request } from '~/lib/request.ts'
-import type { Post } from '~/lib/db.ts';
 import type { RequestType as DeleteRequest, ResponseType as DeleteResponse } from "~/api/delete_post.ts";
 import type { RequestType as LikeRequest, ResponseType as LikeResponse } from "~/api/create_like.ts";
 import type { RequestType as CancelLikeRequest, ResponseType as CancelLikeResponse } from "~/api/delete_like.ts";
-import type { RequestType, ResponseType, ResponsePost } from "~/api/get_posts.ts";
+import type { ResponsePost } from "~/lib/types.ts";
+import type { ResponseType } from "~/api/get_posts.ts";
 
 type Props = {
   posts: ResponseType;
@@ -81,7 +81,7 @@ export default function Posts(props: Props) {
                 <a className="btn btn-outline-secondary btn-sm" href={`/posts/${post.id}`}>Comment</a>
               }
               {Number(post.comments) > 0 &&
-                <a className="ms-3 noDecoration" href={`/posts/${post.id}`}>{post.comments} Comment{post.comments === "1" ? "" : "s"}</a>
+                <a className="ms-2 noDecoration" href={`/posts/${post.id}`}>{post.comments} Comment{post.comments === "1" ? "" : "s"}</a>
               }
               {user && !requesting && post.liked &&
                 <a href={void (0)} onClick={() => cancelLike(post)} className="ms-3"><img src="/assets/img/heart-fill.svg" alt="Edit" width="20" height="20"></img></a>
@@ -90,7 +90,7 @@ export default function Posts(props: Props) {
                 <a href={void (0)} onClick={() => like(post)} className="ms-3"><img src="/assets/img/heart.svg" alt="Edit" width="20" height="20"></img></a>
               }
               {Number(post.likes) > 0 &&
-                <span className="ms-3">{post.likes} Like{post.likes === "1" ? "" : "s"}</span>
+                <span className="ms-2">{post.likes} Like{post.likes === "1" ? "" : "s"}</span>
               }
             </div>
           }

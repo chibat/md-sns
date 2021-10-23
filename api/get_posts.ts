@@ -1,4 +1,5 @@
 import { getGoogleUser } from "~/lib/auth.ts";
+import { ResponsePost } from "~/lib/types.ts";
 import {
   selectFollowingUsersPostByGtId,
   selectFollowingUsersPostByLtId,
@@ -13,7 +14,6 @@ import {
   selectUserPosts,
 } from "~/lib/db.ts";
 
-import type { Post } from "~/lib/db.ts";
 import type { APIHandler, APIResponse } from "aleph/types.d.ts";
 
 export type RequestType = {
@@ -23,7 +23,6 @@ export type RequestType = {
   followig?: boolean;
 };
 
-export type ResponsePost = Post & { liked: boolean };
 export type ResponseType = Array<ResponsePost>;
 
 async function execute(

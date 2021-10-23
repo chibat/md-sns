@@ -5,7 +5,8 @@ import { UserContext } from '~/lib/UserContext.ts'
 import Posts from '~/components/posts.tsx'
 import { request } from '~/lib/request.ts';
 import { PAGE_ROWS } from '~/lib/constants.ts';
-import type { RequestType, ResponseType, ResponsePost } from "~/api/get_posts.ts";
+import type { ResponsePost } from "~/lib/types.ts";
+import type { RequestType, ResponseType } from "~/api/get_posts.ts";
 
 export default function Home() {
   const router = useRouter();
