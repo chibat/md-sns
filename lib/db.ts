@@ -330,6 +330,7 @@ export const insertComment = usePool<
     `;
 
   try {
+    // TODO async for performance
     const results = await client.queryObject<
       { user_id: number; post_id: number }
     >`
@@ -387,6 +388,7 @@ export const insertFollow = usePool<
     `;
 
     try {
+      // TODO async for performance
       await client.queryObject<void>`
       INSERT INTO notification (user_id, type, action_user_id)
       VALUES (${params.followingUserId}, 'follow', ${params.userId})
@@ -487,6 +489,7 @@ export const selectNotifications = usePool<number, Array<AppNotification>>(
     `;
 
     try {
+      // TODO async for performance
       await client.queryObject`
         UPDATE app_user
         SET notification = false
@@ -511,7 +514,7 @@ export const insertLike = usePool<
     `;
 
     try {
-
+      // TODO async for performance
       const results = await client.queryObject<
         { user_id: number; post_id: number }
       >`
