@@ -75,7 +75,7 @@ export default function Posts(props: Props) {
           <div className="card-body">
             <span dangerouslySetInnerHTML={{ __html: marked(post.source) }}></span>
           </div>
-          {(user || Number(post.comments) > 0) &&
+          {(user || Number(post.comments) > 0 || Number(post.likes) > 0) &&
             <div className="card-footer bg-transparent">
               {user &&
                 <a className="btn btn-outline-secondary btn-sm" href={`/posts/${post.id}`}>Comment</a>
@@ -89,7 +89,7 @@ export default function Posts(props: Props) {
               {user && !requesting && !post.liked &&
                 <a href={void (0)} onClick={() => like(post)} className="ms-3"><img src="/assets/img/heart.svg" alt="Edit" width="20" height="20"></img></a>
               }
-              {user && Number(post.likes) > 0 &&
+              {Number(post.likes) > 0 &&
                 <span className="ms-3">{post.likes} Like{post.likes === "1" ? "" : "s"}</span>
               }
             </div>
