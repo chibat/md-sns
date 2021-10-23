@@ -25,12 +25,12 @@ export type Post = {
   id: number;
   user_id: number;
   source: string;
-  likes: number;
   updated_at: string;
   created_at: string;
   name?: string; // app_user
   picture?: string; // app_user
   comments?: string; // comment
+  likes: string; // likes
 };
 
 export type Comment = {
@@ -166,7 +166,8 @@ const SELECT_POST = `
   SELECT
     p.*,
     u.name, u.picture,
-    (SELECT count(*) || '' as comments FROM comment WHERE post_id=p.id)
+    (SELECT count(*) || '' as comments FROM comment WHERE post_id=p.id),
+    (SELECT count(*) || '' as likes FROM likes WHERE post_id=p.id)
   FROM post p
   LEFT JOIN app_user u ON (p.user_id = u.id)
 `;
@@ -332,17 +333,17 @@ export const insertComment = usePool<
     const results = await client.queryObject<
       { user_id: number; post_id: number }
     >`
-      INSERT INTO notification (user_id, post_id, action_user_id)
-      SELECT user_id, id, ${params.userId} FROM post
+      INSERT INTO notification (user_id, type, post_id, action_user_id)
+      SELECT user_id, 'comment'::notification_type, id, ${params.userId}::integer FROM post
       WHERE id=${params.postId} AND user_id != ${params.userId}
       UNION
-      SELECT DISTINCT user_id, post_id FROM comment
+      SELECT DISTINCT user_id, 'comment'::notification_type, post_id, ${params.userId}::integer FROM comment
       WHERE post_id=${params.postId} AND user_id != ${params.userId}
       RETURNING user_id, post_id
   `;
 
     for (const row of results.rows) {
-      await client.queryObject`
+      client.queryObject`
         UPDATE app_user
         SET notification = true
         WHERE id = ${row.user_id}
@@ -387,8 +388,8 @@ export const insertFollow = usePool<
 
     try {
       await client.queryObject<void>`
-      INSERT INTO notification (user_id, action_user_id)
-      VALUES (${params.followingUserId}, ${params.userId})
+      INSERT INTO notification (user_id, type, action_user_id)
+      VALUES (${params.followingUserId}, 'follow', ${params.userId})
     `;
 
       await client.queryObject`
@@ -510,11 +511,6 @@ export const insertLike = usePool<
     `;
 
     try {
-      await client.queryObject`
-      UPDATE post
-      SET likes = likes + 1
-      WHERE id = ${params.postId}
-    `;
 
       const results = await client.queryObject<
         { user_id: number; post_id: number }
@@ -547,16 +543,6 @@ export const deleteLike = usePool<
       DELETE FROM likes
       WHERE user_id = ${params.userId} AND post_id = ${params.postId}
     `;
-
-    try {
-      await client.queryObject`
-      UPDATE post
-      SET likes = likes - 1
-      WHERE id = ${params.postId}
-    `;
-    } catch (error) {
-      console.warn(error);
-    }
   },
 );
 

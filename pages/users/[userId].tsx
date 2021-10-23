@@ -5,10 +5,9 @@ import { UserContext } from '~/lib/UserContext.ts'
 import Posts from '~/components/posts.tsx'
 import Users from '~/components/users.tsx'
 import { request } from '~/lib/request.ts';
-import { Post } from '~/lib/db.ts';
 import { PAGE_ROWS } from '~/lib/constants.ts';
 import { User } from '~/lib/types.ts';
-import type { RequestType, ResponseType } from "~/api/get_posts.ts";
+import type { RequestType, ResponseType, ResponsePost } from "~/api/get_posts.ts";
 import type { RequestType as UserRequest, ResponseType as UserResponse } from "~/api/get_user.ts";
 import type { RequestType as FollowRequest, ResponseType as FollowResponse } from "~/api/create_follow.ts";
 import type { RequestType as UnfollowRequest, ResponseType as UnfollowResponse } from "~/api/delete_follow.ts";
@@ -22,7 +21,7 @@ export default function UserId() {
   const loginUser = useContext(UserContext);
   console.debug("start ", userId);
 
-  const [posts, setPosts] = useState<Array<Post>>([]);
+  const [posts, setPosts] = useState<Array<ResponsePost>>([]);
   const [previousButton, setPreviousButton] = useState<boolean>(false);
   const [nextButton, setNextButton] = useState<boolean>(false);
   const [pageUser, setPageUser] = useState<User | null>();
@@ -179,7 +178,7 @@ export default function UserId() {
               <Users users={followerUsers}></Users>
             </div>
           }
-          <Posts posts={posts} />
+          <Posts posts={posts} setPosts={setPosts} />
           {previousButton &&
             <button className="btn btn-secondary me-2" onClick={previous} style={{ width: "150px" }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-left me-2" viewBox="0 0 16 16">

@@ -23,7 +23,8 @@ export type RequestType = {
   followig?: boolean;
 };
 
-export type ResponseType = Array<Post & { liked: boolean }>;
+export type ResponsePost = Post & { liked: boolean };
+export type ResponseType = Array<ResponsePost>;
 
 async function execute(
   params: RequestType,

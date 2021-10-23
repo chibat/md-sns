@@ -3,16 +3,15 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'aleph/react'
 import Posts from '~/components/posts.tsx'
 import { request } from '~/lib/request.ts';
-import { Post } from '~/lib/db.ts';
 import { PAGE_ROWS } from '~/lib/constants.ts';
-import type { RequestType, ResponseType } from "~/api/get_posts.ts";
+import type { RequestType, ResponseType, ResponsePost } from "~/api/get_posts.ts";
 
 export default function User() {
   const router = useRouter();
 
   console.debug("start ");
 
-  const [posts, setPosts] = useState<Array<Post>>([]);
+  const [posts, setPosts] = useState<Array<ResponsePost>>([]);
   const [previousButton, setPreviousButton] = useState<boolean>(false);
   const [nextButton, setNextButton] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -77,7 +76,7 @@ export default function User() {
       {!loading &&
         <>
           <h1>Following</h1>
-          <Posts posts={posts} />
+          <Posts posts={posts} setPosts={setPosts} />
           {previousButton && <button className="btn btn-secondary me-2" onClick={previous} style={{ width: "150px" }}>Previous</button>}
           {nextButton && <button className="btn btn-secondary" onClick={next} style={{ width: "150px" }}>Next</button>}
           <br />
