@@ -44,16 +44,20 @@ CREATE TABLE follow (
  PRIMARY KEY (user_id, following_user_id)
 );
 
+CREATE TYPE notification_type AS ENUM ('follow', 'like', 'comment');
+
 DROP TABLE notification;
 CREATE TABLE notification (
  id SERIAL PRIMARY KEY,
  user_id INTEGER REFERENCES app_user(id) ON DELETE CASCADE,
- post_id INTEGER REFERENCES post(id) ON DELETE CASCADE,
+ type notification_type,
  action_user_id INTEGER REFERENCES app_user(id) ON DELETE CASCADE,
+ post_id INTEGER REFERENCES post(id) ON DELETE CASCADE,
  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX notification_user_id ON notification(user_id);
+ALTER TABLE notification ADD COLUMN type notification_type;
 
 DROP TABLE likes;
 CREATE TABLE likes (

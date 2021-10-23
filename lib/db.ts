@@ -25,6 +25,7 @@ export type Post = {
   id: number;
   user_id: number;
   source: string;
+  likes: number;
   updated_at: string;
   created_at: string;
   name?: string; // app_user
@@ -46,8 +47,9 @@ export type Comment = {
 export type AppNotification = {
   id: number;
   user_id: number;
-  post_id: number;
+  type: "follow" | "like" | "comment" | null;
   action_user_id: number;
+  post_id: number;
   created_at: string;
   name?: string; // app_user
 };
@@ -513,6 +515,23 @@ export const insertLike = usePool<
       SET likes = likes + 1
       WHERE id = ${params.postId}
     `;
+
+      const results = await client.queryObject<
+        { user_id: number; post_id: number }
+      >`
+        INSERT INTO notification (user_id, type, post_id, action_user_id)
+        SELECT user_id, 'like', id, ${params.userId} FROM post
+        WHERE id=${params.postId} AND user_id != ${params.userId}
+        RETURNING user_id, post_id
+      `;
+
+      for (const row of results.rows) {
+        await client.queryObject`
+          UPDATE app_user
+          SET notification = true
+          WHERE id = ${row.user_id}
+        `;
+      }
     } catch (error) {
       console.warn(error);
     }
@@ -541,15 +560,18 @@ export const deleteLike = usePool<
   },
 );
 
-export const selectLikes = usePool<{userId: number, postIds: number[]}, number[]>(
-  async (client, {userId, postIds}) => {
-    const result = await client.queryObject<{post_id: number}>`
+export const selectLikes = usePool<
+  { userId: number; postIds: number[] },
+  number[]
+>(
+  async (client, { userId, postIds }) => {
+    const result = await client.queryObject<{ post_id: number }>(`
       SELECT post_id
       FROM likes p
-      WHERE user_id = ${userId}
-      AND post_id IN ${postIds}
-    `;
+      WHERE user_id = $1
+      AND post_id = ANY($2::int[])
+    `, userId, postIds);
 
-    return result.rows.map(row => row.post_id);
+    return result.rows.map((row) => row.post_id);
   },
 );

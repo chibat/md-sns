@@ -3,6 +3,7 @@ import {
   selectFollowingUsersPostByGtId,
   selectFollowingUsersPostByLtId,
   selectFollowingUsersPosts,
+  selectLikes,
   selectPostByGtId,
   selectPostByLtId,
   selectPosts,
@@ -21,7 +22,8 @@ export type RequestType = {
   userId?: number;
   followig?: boolean;
 };
-export type ResponseType = Array<Post>;
+
+export type ResponseType = Array<Post & { liked: boolean }>;
 
 async function execute(
   params: RequestType,
@@ -77,7 +79,24 @@ async function execute(
     }
   })();
 
-  return posts;
+  const likedPostIds = user
+    ? await selectLikes({ userId: user.id, postIds: posts.map((post) => post.id) })
+    : [];
+
+  return posts.map((p) => {
+    return {
+      id: p.id,
+      user_id: p.user_id,
+      source: p.source,
+      updated_at: p.updated_at,
+      created_at: p.created_at,
+      comments: p.comments,
+      name: p.name,
+      picture: p.picture,
+      likes: p.likes,
+      liked: likedPostIds.includes(p.id),
+    };
+  });
 }
 
 export const handler: APIHandler = async ({ request, response }) => {
