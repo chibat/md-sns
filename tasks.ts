@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run -A --unstable
+#!/usr/bin/env -S deno run -A --unstable --no-check
 
 import { deno, denoDir, tasks, rm, $ } from "./tasks_utils.ts";
 
@@ -22,7 +22,7 @@ if (!home) {
 
 const esbuild = `${home}/.cache/esbuild/bin/esbuild-linux-64@0.13.2`;
 
-await tasks(build, test, dev, start, deploy, clean);
+await tasks(build, test, dev, start, deploy, clean, logs);
 
 async function dev() {
   const PORT = 8080;
@@ -191,3 +191,8 @@ async function clean() {
   rm(".aleph");
   rm("dist");
 }
+
+async function logs() {
+  await $(["heroku", "logs", "-a", "md-sns", "--tail"]);
+}
+
