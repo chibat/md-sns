@@ -32,7 +32,6 @@ export default function Post() {
   const [loading, setLoading] = useState<boolean>(false);
   const [requesting, setRequesting] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
-  const [likeUsers, setLikeUsers] = useState<LikeUsersResponse>([]);
 
   function displayEdit() {
     setFlag(true);
@@ -86,9 +85,6 @@ export default function Post() {
   }
 
   async function displayLikeUsers() {
-    const results = await request<LikeUsersRequest, LikeUsersResponse>("get_like_users", { postId });
-    console.log(results);
-    setLikeUsers(results);
     setModal(true);
   }
 
@@ -198,18 +194,29 @@ export default function Post() {
               }
             </div>
           </div>
-          <LikeUsersModal users={likeUsers} modal={modal} setModal={setModal} />
+          { modal &&
+          <LikeUsersModal postId={postId} modal={modal} setModal={setModal} />
+          }
         </>
       }
     </>
   );
 }
 
-function LikeUsersModal(props: { users: LikeUsersResponse, modal: boolean, setModal: React.Dispatch<React.SetStateAction<boolean>> }) {
+function LikeUsersModal(props: { postId: number, modal: boolean, setModal: React.Dispatch<React.SetStateAction<boolean>> }) {
 
-  async function closeModal() {
+  const [users, setUsers] = useState<LikeUsersResponse>([]);
+
+  function closeModal() {
     props.setModal(false);
   }
+
+  useEffect(() => {
+    request<LikeUsersRequest, LikeUsersResponse>("get_like_users", { postId: props.postId }).then(a => {
+      console.log(users);
+      setUsers(a);
+    });
+  }, []);
 
   return (
     <ReactModal
@@ -224,7 +231,7 @@ function LikeUsersModal(props: { users: LikeUsersResponse, modal: boolean, setMo
           <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={closeModal}></button>
         </div>
         <div className="modal-body">
-          <Users users={props.users} />
+          <Users users={users} />
         </div>
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={closeModal}>Close</button>
