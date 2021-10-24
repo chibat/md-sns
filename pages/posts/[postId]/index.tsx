@@ -92,10 +92,6 @@ export default function Post() {
     setModal(true);
   }
 
-  async function closeModal() {
-    setModal(false);
-  }
-
   useEffect(() => {
     console.debug("useEffect");
     (async () => {
@@ -202,27 +198,37 @@ export default function Post() {
               }
             </div>
           </div>
-          <ReactModal
-            isOpen={modal}
-            contentLabel="Likes"
-            onRequestClose={closeModal}
-            className="modal-dialog"
-          >
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Likes</h5>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={closeModal}></button>
-              </div>
-              <div className="modal-body">
-                <Users users={likeUsers} />
-              </div>
-              <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={closeModal}>Close</button>
-              </div>
-            </div>
-          </ReactModal>
+          <LikeUsersModal users={likeUsers} modal={modal} setModal={setModal} />
         </>
       }
     </>
   );
+}
+
+function LikeUsersModal(props: { users: LikeUsersResponse, modal: boolean, setModal: React.Dispatch<React.SetStateAction<boolean>> }) {
+
+  async function closeModal() {
+    props.setModal(false);
+  }
+
+  return (
+    <ReactModal
+      isOpen={props.modal}
+      contentLabel="Likes"
+      onRequestClose={closeModal}
+      className="modal-dialog"
+    >
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Likes</h5>
+          <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={closeModal}></button>
+        </div>
+        <div className="modal-body">
+          <Users users={props.users} />
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-secondary" onClick={closeModal}>Close</button>
+        </div>
+      </div>
+    </ReactModal>);
 }
