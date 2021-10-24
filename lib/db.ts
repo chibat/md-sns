@@ -54,7 +54,7 @@ export type AppNotification = {
   name?: string; // app_user
 };
 
-const pool = new Pool(dbUrl, POOL_CONNECTIONS);
+const pool = new Pool(dbUrl, POOL_CONNECTIONS, true);
 
 type ExecuteType<P, R> = (client: PoolClient, params: P) => Promise<R>;
 
@@ -562,5 +562,17 @@ export const selectLikes = usePool<
     `, userId, postIds);
 
     return result.rows.map((row) => row.post_id);
+  },
+);
+
+export const selectLikeUsers = usePool<number, Array<AppUser>>(
+  async (client, postId) => {
+    const result = await client.queryObject<AppUser>`
+      SELECT *
+      FROM app_user
+      WHERE id
+      IN (SELECT user_id FROM likes WHERE post_id = ${postId} ORDER BY created_at DESC)
+    `;
+    return result.rows;
   },
 );

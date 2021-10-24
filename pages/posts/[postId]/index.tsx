@@ -2,13 +2,16 @@ import React from 'react'
 import { useEffect, useContext, useState } from 'react'
 import hljs from 'https://esm.sh/highlight.js';
 import marked from 'https://esm.sh/marked@2.0.1';
+import ReactModal from 'https://esm.sh/react-modal@3.14.3';
 import { UserContext } from '~/lib/UserContext.ts'
 import { useRouter } from 'aleph/react'
 import { request } from '~/lib/request.ts'
+import Users from '~/components/users.tsx'
 import type { RequestType, ResponseType } from "~/api/get_post.ts";
 import type { RequestType as DeleteRequest, ResponseType as DeleteResponse } from "~/api/delete_post.ts";
 import type { RequestType as CreateRequest, ResponseType as CreateResponse } from "~/api/create_comment.ts";
 import type { RequestType as CommentsRequest, ResponseType as CommentsResponse } from "~/api/get_comments.ts";
+import type { RequestType as LikeUsersRequest, ResponseType as LikeUsersResponse } from "~/api/get_like_users.ts";
 import type { RequestType as DeleteCommentRequest, ResponseType as DeleteCommentResponse } from "~/api/delete_comment.ts";
 import type { ResponsePost } from "~/lib/types.ts";
 import type { RequestType as LikeRequest, ResponseType as LikeResponse } from "~/api/create_like.ts";
@@ -28,6 +31,8 @@ export default function Post() {
   const [comments, setComments] = useState<CommentsResponse>();
   const [loading, setLoading] = useState<boolean>(false);
   const [requesting, setRequesting] = useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(false);
+  const [likeUsers, setLikeUsers] = useState<LikeUsersResponse>([]);
 
   function displayEdit() {
     setFlag(true);
@@ -78,6 +83,17 @@ export default function Post() {
     post.liked = false;
     post.likes = "" + (Number(post.likes) - 1);
     setRequesting(false);
+  }
+
+  async function displayLikeUsers() {
+    const results = await request<LikeUsersRequest, LikeUsersResponse>("get_like_users", { postId });
+    console.log(results);
+    setLikeUsers(results);
+    setModal(true);
+  }
+
+  async function closeModal() {
+    setModal(false);
   }
 
   useEffect(() => {
@@ -135,7 +151,7 @@ export default function Post() {
                   <a href={void (0)} onClick={() => like(post)} className="ms-3"><img src="/assets/img/heart.svg" alt="Edit" width="20" height="20"></img></a>
                 }
                 {Number(post.likes) > 0 &&
-                  <span className="ms-2">{post.likes} Like{post.likes === "1" ? "" : "s"}</span>
+                  <a href={void (0)} className="noDecoration ms-2" onClick={displayLikeUsers}>{post.likes} Like{post.likes === "1" ? "" : "s"}</a>
                 }
               </div>
               {comments && comments.map(comment =>
@@ -186,6 +202,25 @@ export default function Post() {
               }
             </div>
           </div>
+          <ReactModal
+            isOpen={modal}
+            contentLabel="Likes"
+            onRequestClose={closeModal}
+            className="modal-dialog"
+          >
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Likes</h5>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={closeModal}></button>
+              </div>
+              <div className="modal-body">
+                <Users users={likeUsers} />
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={closeModal}>Close</button>
+              </div>
+            </div>
+          </ReactModal>
         </>
       }
     </>
