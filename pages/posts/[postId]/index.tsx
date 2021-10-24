@@ -2,16 +2,14 @@ import React from 'react'
 import { useEffect, useContext, useState } from 'react'
 import hljs from 'https://esm.sh/highlight.js';
 import marked from 'https://esm.sh/marked@2.0.1';
-import ReactModal from 'https://esm.sh/react-modal@3.14.3';
 import { UserContext } from '~/lib/UserContext.ts'
 import { useRouter } from 'aleph/react'
 import { request } from '~/lib/request.ts'
-import Users from '~/components/users.tsx'
+import LikeUsersModal from '~/components/like_users_modal.tsx'
 import type { RequestType, ResponseType } from "~/api/get_post.ts";
 import type { RequestType as DeleteRequest, ResponseType as DeleteResponse } from "~/api/delete_post.ts";
 import type { RequestType as CreateRequest, ResponseType as CreateResponse } from "~/api/create_comment.ts";
 import type { RequestType as CommentsRequest, ResponseType as CommentsResponse } from "~/api/get_comments.ts";
-import type { RequestType as LikeUsersRequest, ResponseType as LikeUsersResponse } from "~/api/get_like_users.ts";
 import type { RequestType as DeleteCommentRequest, ResponseType as DeleteCommentResponse } from "~/api/delete_comment.ts";
 import type { ResponsePost } from "~/lib/types.ts";
 import type { RequestType as LikeRequest, ResponseType as LikeResponse } from "~/api/create_like.ts";
@@ -203,39 +201,3 @@ export default function Post() {
   );
 }
 
-function LikeUsersModal(props: { postId: number, modal: boolean, setModal: React.Dispatch<React.SetStateAction<boolean>> }) {
-
-  const [users, setUsers] = useState<LikeUsersResponse>([]);
-
-  function closeModal() {
-    props.setModal(false);
-  }
-
-  useEffect(() => {
-    request<LikeUsersRequest, LikeUsersResponse>("get_like_users", { postId: props.postId }).then(a => {
-      console.log(users);
-      setUsers(a);
-    });
-  }, []);
-
-  return (
-    <ReactModal
-      isOpen={props.modal}
-      contentLabel="Likes"
-      onRequestClose={closeModal}
-      className="modal-dialog"
-    >
-      <div className="modal-content">
-        <div className="modal-header">
-          <h5 className="modal-title">Likes</h5>
-          <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={closeModal}></button>
-        </div>
-        <div className="modal-body">
-          <Users users={users} />
-        </div>
-        <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={closeModal}>Close</button>
-        </div>
-      </div>
-    </ReactModal>);
-}
