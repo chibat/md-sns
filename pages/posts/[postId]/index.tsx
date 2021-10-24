@@ -82,7 +82,7 @@ export default function Post() {
     setRequesting(false);
   }
 
-  async function displayLikeUsers() {
+  async function openModal() {
     setModal(true);
   }
 
@@ -141,7 +141,7 @@ export default function Post() {
                   <a href={void (0)} onClick={() => like(post)} className="ms-3"><img src="/assets/img/heart.svg" alt="Edit" width="20" height="20"></img></a>
                 }
                 {Number(post.likes) > 0 &&
-                  <a href={void (0)} className="noDecoration ms-2" onClick={displayLikeUsers}>{post.likes} Like{post.likes === "1" ? "" : "s"}</a>
+                  <a href={void (0)} className="noDecoration ms-2" onClick={openModal}>{post.likes} Like{post.likes === "1" ? "" : "s"}</a>
                 }
               </div>
               {comments && comments.map(comment =>

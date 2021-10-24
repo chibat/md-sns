@@ -4,6 +4,7 @@ import marked from 'https://esm.sh/marked@2.0.1';
 import hljs from 'https://esm.sh/highlight.js';
 import { UserContext } from '~/lib/UserContext.ts'
 import { request } from '~/lib/request.ts'
+import LikeUsersModal from '~/components/like_users_modal.tsx'
 import type { RequestType as DeleteRequest, ResponseType as DeleteResponse } from "~/api/delete_post.ts";
 import type { RequestType as LikeRequest, ResponseType as LikeResponse } from "~/api/create_like.ts";
 import type { RequestType as CancelLikeRequest, ResponseType as CancelLikeResponse } from "~/api/delete_like.ts";
@@ -18,6 +19,8 @@ type Props = {
 export default function Posts(props: Props) {
 
   const [requesting, setRequesting] = useState<boolean>(false);
+  const [modal, setModal] = useState<boolean>(false);
+  const [selectedPostId, setSelectedPostId] = useState<number>();
 
   useEffect(() => {
     console.debug("useEffect");
@@ -47,6 +50,11 @@ export default function Posts(props: Props) {
     post.likes = "" + (Number(post.likes) - 1);
     props.setPosts([...props.posts]);
     setRequesting(false);
+  }
+
+  function openModal(postId: number) {
+    setSelectedPostId(postId);
+    setModal(true);
   }
 
   const user = useContext(UserContext);
@@ -90,12 +98,15 @@ export default function Posts(props: Props) {
                 <a href={void (0)} onClick={() => like(post)} className="ms-3"><img src="/assets/img/heart.svg" alt="Edit" width="20" height="20"></img></a>
               }
               {Number(post.likes) > 0 &&
-                <span className="ms-2">{post.likes} Like{post.likes === "1" ? "" : "s"}</span>
+                <a href={void (0)} className="noDecoration ms-2" onClick={() => openModal(post.id)}>{post.likes} Like{post.likes === "1" ? "" : "s"}</a>
               }
             </div>
           }
         </div>
       )}
+      {modal && selectedPostId &&
+        <LikeUsersModal postId={selectedPostId} modal={modal} setModal={setModal} />
+      }
     </>
   );
 }
