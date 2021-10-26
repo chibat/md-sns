@@ -121,6 +121,11 @@ export default function Index() {
         <>
           <head>
             <title>Post {post.id} - md-sns</title>
+            <meta property="og:url" content="https://md-sns.herokuapp.com/"></meta>
+            <meta property="og:title" content={`md-sns: Post ${post.id}`}></meta>
+            <meta property="og:description" content={post.source?.substring(0,1000)?.replaceAll("\n", " ")}></meta>
+            <meta name="twitter:card" content="summary"></meta>
+            <meta name="twitter:site" content="@tomofummy" />
           </head>
           <div className="card mb-3">
             <div className="card-header bg-transparent d-flex justify-content-between">
