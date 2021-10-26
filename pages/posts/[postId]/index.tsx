@@ -3,19 +3,19 @@ import { useEffect, useContext, useState } from 'react'
 import hljs from 'https://esm.sh/highlight.js';
 import marked from 'https://esm.sh/marked@2.0.1';
 import { UserContext } from '~/lib/UserContext.ts'
-import { useRouter } from 'aleph/react'
+import { useRouter, useDeno } from 'aleph/react'
 import { request } from '~/lib/request.ts'
+import { selectPost, Post } from "~/lib/db.ts";
 import LikeUsersModal from '~/components/like_users_modal.tsx'
-import type { RequestType, ResponseType } from "~/api/get_post.ts";
 import type { RequestType as DeleteRequest, ResponseType as DeleteResponse } from "~/api/delete_post.ts";
 import type { RequestType as CreateRequest, ResponseType as CreateResponse } from "~/api/create_comment.ts";
 import type { RequestType as CommentsRequest, ResponseType as CommentsResponse } from "~/api/get_comments.ts";
 import type { RequestType as DeleteCommentRequest, ResponseType as DeleteCommentResponse } from "~/api/delete_comment.ts";
-import type { ResponsePost } from "~/lib/types.ts";
 import type { RequestType as LikeRequest, ResponseType as LikeResponse } from "~/api/create_like.ts";
 import type { RequestType as CancelLikeRequest, ResponseType as CancelLikeResponse } from "~/api/delete_like.ts";
+import type { RequestType as IsLikedRequest } from "~/api/is_liked.ts";
 
-export default function Post() {
+export default function Index() {
 
   const router = useRouter();
   const postId = Number(router.params.postId);
@@ -25,11 +25,16 @@ export default function Post() {
 
   const [flag, setFlag] = useState<boolean>(true);
   const [source, setSource] = useState<string>("");
-  const [post, setPost] = useState<ResponsePost>();
+  const [likes, setLikes] = useState<string>('0');
+  const [liked, setLiked] = useState<boolean>();
   const [comments, setComments] = useState<CommentsResponse>();
   const [loading, setLoading] = useState<boolean>(false);
   const [requesting, setRequesting] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
+
+  const post = useDeno(async () => {
+    return await selectPost(postId);
+  }, { revalidate: true });
 
   function displayEdit() {
     setFlag(true);
@@ -66,19 +71,19 @@ export default function Post() {
     setLoading(false);
   }
 
-  async function like(post: ResponsePost) {
+  async function like(post: Post) {
     setRequesting(true);
     await request<LikeRequest, LikeResponse>("create_like", { postId: post.id });
-    post.liked = true;
-    post.likes = "" + (Number(post.likes) + 1);
+    setLiked(true);
+    setLikes("" + (Number(likes) + 1));
     setRequesting(false);
   }
 
-  async function cancelLike(post: ResponsePost) {
+  async function cancelLike(post: Post) {
     setRequesting(true);
     await request<CancelLikeRequest, CancelLikeResponse>("delete_like", { postId: post.id });
-    post.liked = false;
-    post.likes = "" + (Number(post.likes) - 1);
+    setLiked(false);
+    setLikes("" + (Number(likes) - 1));
     setRequesting(false);
   }
 
@@ -88,13 +93,15 @@ export default function Post() {
 
   useEffect(() => {
     console.debug("useEffect");
+    if (!post) {
+      router.push("/");
+      return;
+    }
+    setLikes(post.likes);
     (async () => {
-      const result = await request<RequestType, ResponsePost>("get_post", { postId });
-      if (!result) {
-        router.push("/");
-        return;
-      }
-      setPost(result);
+      const _liked = await request<IsLikedRequest, boolean>("is_liked", { postId });
+      console.log(_liked);
+      setLiked(_liked);
       await readComments();
     })();
   }, []);
@@ -134,14 +141,14 @@ export default function Post() {
             </div>
             <div className="card-footer bg-transparent">
               <div className="mb-3">
-                {user && !requesting && post.liked &&
+                {user && !requesting && liked &&
                   <a href={void (0)} onClick={() => cancelLike(post)} className="ms-3"><img src="/assets/img/heart-fill.svg" alt="Edit" width="20" height="20"></img></a>
                 }
-                {user && !requesting && !post.liked &&
+                {user && !requesting && !liked &&
                   <a href={void (0)} onClick={() => like(post)} className="ms-3"><img src="/assets/img/heart.svg" alt="Edit" width="20" height="20"></img></a>
                 }
-                {Number(post.likes) > 0 &&
-                  <a href={void (0)} className="noDecoration ms-2" onClick={openModal}>{post.likes} Like{post.likes === "1" ? "" : "s"}</a>
+                {Number(likes) > 0 &&
+                  <a href={void (0)} className="noDecoration ms-2" onClick={openModal}>{likes} Like{likes === "1" ? "" : "s"}</a>
                 }
               </div>
               {comments && comments.map(comment =>
@@ -192,8 +199,8 @@ export default function Post() {
               }
             </div>
           </div>
-          { modal &&
-          <LikeUsersModal postId={postId} modal={modal} setModal={setModal} />
+          {modal &&
+            <LikeUsersModal postId={postId} modal={modal} setModal={setModal} />
           }
         </>
       }
