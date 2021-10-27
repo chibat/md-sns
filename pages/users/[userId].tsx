@@ -7,8 +7,9 @@ import Users from '~/components/users.tsx'
 import { request } from '~/lib/request.ts';
 import { PAGE_ROWS } from '~/lib/constants.ts';
 import { User } from '~/lib/types.ts';
-import type { RequestType, ResponseType } from "~/api/get_posts.ts";
+import FollowingUsersModal from '~/components/following_users_modal.tsx'
 import { ResponsePost } from "~/lib/types.ts";
+import type { RequestType, ResponseType } from "~/api/get_posts.ts";
 import type { RequestType as UserRequest, ResponseType as UserResponse } from "~/api/get_user.ts";
 import type { RequestType as FollowRequest, ResponseType as FollowResponse } from "~/api/create_follow.ts";
 import type { RequestType as UnfollowRequest, ResponseType as UnfollowResponse } from "~/api/delete_follow.ts";
@@ -33,6 +34,7 @@ export default function UserId() {
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [followingUsers, setFollowingUsers] = useState<FollowingUsersResponse>([]);
   const [followerUsers, setFollowerUsers] = useState<FollowerUsersResponse>([]);
+  const [followingModal, setFollowingModal] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -110,9 +112,7 @@ export default function UserId() {
   }
 
   async function displayFollowingUsers() {
-    const results = await request<FollowingUsersRequest, FollowingUsersResponse>("get_following_users", { userId });
-    setFollowerUsers([]);
-    setFollowingUsers(results);
+    setFollowingModal(true);
   }
 
   async function displayFollowerUsers() {
@@ -201,6 +201,9 @@ export default function UserId() {
           <br />
           <br />
         </>
+      }
+      {followingModal &&
+        <FollowingUsersModal userId={userId} modal={followingModal} setModal={setFollowingModal} />
       }
     </>
   );
