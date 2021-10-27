@@ -91,6 +91,11 @@ export default function Posts(props: Props) {
               {Number(post.comments) > 0 &&
                 <a className="ms-2 noDecoration" href={`/posts/${post.id}`}>{post.comments} Comment{post.comments === "1" ? "" : "s"}</a>
               }
+              {requesting &&
+                <div className="spinner-grow spinner-grow-sm ms-3" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              }
               {user && !requesting && post.liked &&
                 <a href={void (0)} onClick={() => cancelLike(post)} className="ms-3"><img src="/assets/img/heart-fill.svg" alt="Edit" width="20" height="20"></img></a>
               }

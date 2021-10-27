@@ -29,6 +29,7 @@ export default function Index() {
   const [liked, setLiked] = useState<boolean>();
   const [comments, setComments] = useState<CommentsResponse>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [commentLoading, setCommentLoading] = useState<boolean>(true);
   const [requesting, setRequesting] = useState<boolean>(false);
   const [modal, setModal] = useState<boolean>(false);
 
@@ -59,7 +60,9 @@ export default function Index() {
   }
 
   async function readComments() {
+    setCommentLoading(true);
     const results = await request<CommentsRequest, CommentsResponse>("get_comments", { postId });
+    setCommentLoading(false);
     setComments(results);
   }
 
@@ -123,7 +126,7 @@ export default function Index() {
             <title>Post {post.id} - md-sns</title>
             <meta property="og:url" content="https://md-sns.herokuapp.com/"></meta>
             <meta property="og:title" content={`md-sns: Post ${post.id}`}></meta>
-            <meta property="og:description" content={post.source?.substring(0,1000)?.replaceAll("\n", " ")}></meta>
+            <meta property="og:description" content={post.source?.substring(0, 1000)?.replaceAll("\n", " ")}></meta>
             <meta property="og:image" content={post.picture} />
             <meta name="twitter:card" content="summary"></meta>
             <meta name="twitter:site" content="@tomofummy" />
@@ -138,7 +141,7 @@ export default function Index() {
               {user?.userId === post.user_id &&
                 <div>
                   <a href={`/posts/${post.id}/edit`}><img src="/assets/img/pencil-fill.svg" alt="Edit" width="20" height="20"></img></a>
-                  <a href="#" className="ms-2" onClick={deletePost}><img src="/assets/img/trash-fill.svg" alt="Delete" width="20" height="20"></img></a>
+                  <a href={void (0)} className="ms-2" onClick={deletePost}><img src="/assets/img/trash-fill.svg" alt="Delete" width="20" height="20"></img></a>
                 </div>
               }
             </div>
@@ -147,6 +150,11 @@ export default function Index() {
             </div>
             <div className="card-footer bg-transparent">
               <div className="mb-3">
+                {requesting &&
+                  <div className="spinner-grow spinner-grow-sm ms-3" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                }
                 {user && !requesting && liked &&
                   <a href={void (0)} onClick={() => cancelLike(post)} className="ms-3"><img src="/assets/img/heart-fill.svg" alt="Edit" width="20" height="20"></img></a>
                 }
@@ -157,6 +165,13 @@ export default function Index() {
                   <a href={void (0)} className="noDecoration ms-2" onClick={openModal}>{likes} Like{likes === "1" ? "" : "s"}</a>
                 }
               </div>
+              {commentLoading &&
+                <div className="d-flex justify-content-center">
+                  <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              }
               {comments && comments.map(comment =>
                 <div className="border-bottom ms-4">
                   <div className="d-flex justify-content-between">
@@ -166,7 +181,7 @@ export default function Index() {
                       {new Date(comment.updated_at).toLocaleString()}
                     </div>
                     {user?.userId === comment.user_id &&
-                      <a href="#" className="ms-2" onClick={() => deleteComment(comment.id)}><img src="/assets/img/trash-fill.svg" alt="Delete" width="20" height="20"></img></a>
+                      <a href={void (0)} className="ms-2" onClick={() => deleteComment(comment.id)}><img src="/assets/img/trash-fill.svg" alt="Delete" width="20" height="20"></img></a>
                     }
                   </div>
                   <div>
