@@ -3,18 +3,16 @@ import { useContext, useState, useEffect } from 'react'
 import { useRouter } from 'aleph/react'
 import { UserContext } from '~/lib/UserContext.ts'
 import Posts from '~/components/posts.tsx'
-import Users from '~/components/users.tsx'
 import { request } from '~/lib/request.ts';
 import { PAGE_ROWS } from '~/lib/constants.ts';
 import { User } from '~/lib/types.ts';
 import FollowingUsersModal from '~/components/following_users_modal.tsx'
+import FollowerUsersModal from '~/components/follower_users_modal.tsx'
 import { ResponsePost } from "~/lib/types.ts";
 import type { RequestType, ResponseType } from "~/api/get_posts.ts";
 import type { RequestType as UserRequest, ResponseType as UserResponse } from "~/api/get_user.ts";
 import type { RequestType as FollowRequest, ResponseType as FollowResponse } from "~/api/create_follow.ts";
 import type { RequestType as UnfollowRequest, ResponseType as UnfollowResponse } from "~/api/delete_follow.ts";
-import type { RequestType as FollowingUsersRequest, ResponseType as FollowingUsersResponse } from "~/api/get_following_users.ts";
-import type { RequestType as FollowerUsersRequest, ResponseType as FollowerUsersResponse } from "~/api/get_follower_users.ts";
 
 export default function UserId() {
   const router = useRouter();
@@ -32,9 +30,8 @@ export default function UserId() {
   const [following, setFollowing] = useState<string>('0');
   const [followers, setFollowers] = useState<string>('0');
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
-  const [followingUsers, setFollowingUsers] = useState<FollowingUsersResponse>([]);
-  const [followerUsers, setFollowerUsers] = useState<FollowerUsersResponse>([]);
   const [followingModal, setFollowingModal] = useState<boolean>(false);
+  const [followerModal, setFollowerModal] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -116,9 +113,7 @@ export default function UserId() {
   }
 
   async function displayFollowerUsers() {
-    const results = await request<FollowerUsersRequest, FollowerUsersResponse>("get_follower_users", { userId });
-    setFollowingUsers([]);
-    setFollowerUsers(results);
+    setFollowerModal(true);
   }
 
   return (
@@ -170,18 +165,6 @@ export default function UserId() {
               <a className="noDecoration" href="/likes">Likes</a>
             }
           </div>
-          {followingUsers.length > 0 &&
-            <div className="card ps-3 pt-3 mb-3">
-              <h4>Following</h4>
-              <Users users={followingUsers}></Users>
-            </div>
-          }
-          {followerUsers.length > 0 &&
-            <div className="card ps-3 pt-3 mb-3">
-              <h4>Follower</h4>
-              <Users users={followerUsers}></Users>
-            </div>
-          }
           <Posts posts={posts} setPosts={setPosts} />
           {previousButton &&
             <button className="btn btn-secondary me-2" onClick={previous} style={{ width: "150px" }}>
@@ -204,6 +187,9 @@ export default function UserId() {
       }
       {followingModal &&
         <FollowingUsersModal userId={userId} modal={followingModal} setModal={setFollowingModal} />
+      }
+      {followerModal &&
+        <FollowerUsersModal userId={userId} modal={followerModal} setModal={setFollowerModal} />
       }
     </>
   );
