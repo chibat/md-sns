@@ -65,6 +65,7 @@ export default function App(
         <header className="py-3 mb-3 border-bottom bg-white">
           <div className="container-fluid d-grid gap-3 align-items-center" style={{ gridTemplateColumns: "1fr 2fr" }}>
             <div>
+              <img src="/assets/img/icon-192x192.png" width="32" className="me-2" />
               <a className="fs-4 me-3 noDecoration" href="#" onClick={goTop}>md-sns</a>
               <a className="me-3 noDecoration" href="/">All</a>
               {authInfo && authInfo.loginUser &&
