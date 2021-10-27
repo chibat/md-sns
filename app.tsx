@@ -68,7 +68,10 @@ export default function App(
               <a className="fs-4 me-3 noDecoration" href="#" onClick={goTop}>md-sns</a>
               <a className="me-3 noDecoration" href="/">All</a>
               {authInfo && authInfo.loginUser &&
-                <a className="me-3 noDecoration" href="/following">Following</a>
+                <>
+                  <a className="me-3 noDecoration" href="/following">Following</a>
+                  <a className="me-3 noDecoration" href="/likes">Likes</a>
+                </>
               }
             </div>
             <div className="d-flex align-items-center ms-auto">

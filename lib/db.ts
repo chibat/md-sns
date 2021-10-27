@@ -319,6 +319,52 @@ export const selectFollowingUsersPostByGtId = usePool<
   return result.rows;
 });
 
+export const selectLikedPosts = usePool<number, Array<Post>>(
+  async (client, userId) => {
+    const result = await client.queryObject<Post>(
+      `
+      ${SELECT_POST}
+      WHERE p.id IN (SELECT post_id FROM likes WHERE user_id = $1 ORDER BY post_id DESC)
+      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}`,
+      userId,
+    );
+    return result.rows;
+  },
+);
+
+export const selectLikedPostsByLtId = usePool<
+  { ltId: number; userId: number },
+  Array<Post>
+>(async (client, params) => {
+  const result = await client.queryObject<Post>(
+    `
+      ${SELECT_POST}
+      WHERE p.id IN (SELECT post_id FROM likes WHERE user_id = $1 AND post_id < $2 ORDER BY post_id DESC)
+      ORDER BY p.id DESC LIMIT ${PAGE_ROWS}
+    `,
+    params.userId,
+    params.ltId,
+  );
+  return result.rows;
+});
+
+export const selectLikedPostsByGtId = usePool<
+  { gtId: number; userId: number },
+  Array<Post>
+>(async (client, params) => {
+  const result = await client.queryObject<Post>(
+    `SELECT * FROM (
+        ${SELECT_POST}
+        WHERE p.id IN (SELECT post_id FROM likes WHERE user_id = $1 AND post_id > $2 ORDER BY post_id)
+        ORDER BY p.id LIMIT ${PAGE_ROWS}
+      ) s ORDER BY id DESC
+    `,
+    params.userId,
+    params.gtId,
+  );
+  return result.rows;
+});
+
 export const insertComment = usePool<
   { postId: number; userId: number; source: string },
   void
