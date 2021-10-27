@@ -165,7 +165,10 @@ export default function UserId() {
           }
           <div className="mb-3">
             <a className="noDecoration me-3" onClick={displayFollowingUsers}>{following} Following</a>
-            <a className="noDecoration" onClick={displayFollowerUsers}>{followers} Follower{followers === "1" ? "" : "s"}</a>
+            <a className="noDecoration me-3" onClick={displayFollowerUsers}>{followers} Follower{followers === "1" ? "" : "s"}</a>
+            {(loginUser && pageUser && pageUser.userId === loginUser.userId) &&
+              <a className="noDecoration" href="/likes">Likes</a>
+            }
           </div>
           {followingUsers.length > 0 &&
             <div className="card ps-3 pt-3 mb-3">

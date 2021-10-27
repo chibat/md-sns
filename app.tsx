@@ -69,10 +69,7 @@ export default function App(
               <a className="fs-4 me-3 noDecoration" href="#" onClick={goTop}>md-sns</a>
               <a className="me-3 noDecoration" href="/">All</a>
               {authInfo && authInfo.loginUser &&
-                <>
-                  <a className="me-3 noDecoration" href="/following">Following</a>
-                  <a className="me-3 noDecoration" href="/likes">Likes</a>
-                </>
+                <a className="me-3 noDecoration" href="/following">Following</a>
               }
             </div>
             <div className="d-flex align-items-center ms-auto">
@@ -93,6 +90,7 @@ export default function App(
                     </a>
                     <ul className="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
                       <li><a className="dropdown-item" href={`/users/${authInfo.loginUser.userId}`}>Profile</a></li>
+                      <li><a className="dropdown-item" href="/likes">Likes</a></li>
                       <li><hr className="dropdown-divider" /></li>
                       <li><a className="dropdown-item" href="#" onClick={signout}>Sign out</a></li>
                     </ul>
