@@ -8,6 +8,7 @@ import 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css'
 import "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.0/styles/tomorrow-night.min.css";
 import marked from 'marked';
 import "./style/app.css";
+
 import type { ResponseType } from "~/api/auth_info.ts";
 
 marked.setOptions({ breaks: true });
