@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect, useContext, useState } from 'react'
 import marked from 'marked';
-import hljs from 'highlight.js';
+import hljs from 'https://esm.sh/highlight.js@11.3.1';
 import { UserContext } from '~/lib/UserContext.ts'
 import { request } from '~/lib/request.ts'
 import LikeUsersModal from '~/components/like_users_modal.tsx'

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useContext, useState } from 'react'
-import hljs from 'highlight.js';
+import hljs from 'https://esm.sh/highlight.js@11.3.1';
 import marked from 'marked';
 import { UserContext } from '~/lib/UserContext.ts'
 import { useRouter, useDeno } from 'aleph/react'

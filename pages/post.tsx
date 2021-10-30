@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'aleph/react'
 import marked from 'marked';
-import hljs from 'highlight.js';
+import hljs from 'https://esm.sh/highlight.js@11.3.1';
 import { UserContext } from '~/lib/UserContext.ts'
 import { request } from '~/lib/request.ts'
 import type { RequestType, ResponseType } from '~/api/create_post.ts'
