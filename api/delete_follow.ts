@@ -1,6 +1,7 @@
-import type { APIHandler } from "aleph/types.d.ts";
 import { deleteFollow, selectUserByGoogleId } from "~/lib/db.ts";
 import { getGoogleUser } from "~/lib/auth.ts";
+
+import type { APIHandler } from "aleph/types.d.ts";
 
 export type RequestType = { followingUserId: number };
 export type ResponseType = {};

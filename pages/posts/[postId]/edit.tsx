@@ -1,10 +1,11 @@
 import React from 'react'
 import { useEffect, useContext, useState } from 'react'
-import hljs from 'https://esm.sh/highlight.js';
-import marked from 'https://esm.sh/marked@2.0.1';
-import { UserContext } from '~/lib/UserContext.ts'
+import hljs from 'highlight.js';
+import marked from 'marked';
 import { useRouter } from 'aleph/react'
+import { UserContext } from '~/lib/UserContext.ts'
 import { request } from '~/lib/request.ts'
+
 import type { RequestType, ResponseType } from "~/api/get_post.ts";
 import type { RequestType as UpdateRequest, ResponseType as UpdateResponse } from '~/api/update_post.ts'
 

@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { useEffect, useState } from 'react'
-import ReactModal from 'https://esm.sh/react-modal@3.14.3';
+import ReactModal from 'react-modal';
 import Users from '~/components/users.tsx'
 import { request } from '~/lib/request.ts'
 import type { RequestType, ResponseType } from "~/api/get_following_users.ts";

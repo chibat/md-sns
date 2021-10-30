@@ -1,6 +1,7 @@
-import type { APIHandler } from "aleph/types.d.ts";
 import { getGoogleUser } from "~/lib/auth.ts";
 import { selectLikes, selectUserByGoogleId } from "~/lib/db.ts";
+
+import type { APIHandler } from "aleph/types.d.ts";
 
 export type RequestType = { postId: number };
 

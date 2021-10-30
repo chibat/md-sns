@@ -1,6 +1,7 @@
-import type { APIHandler } from "aleph/types.d.ts";
 import { selectLikeUsers } from "~/lib/db.ts";
 import { defaultString } from "~/lib/utils.ts";
+
+import type { APIHandler } from "aleph/types.d.ts";
 import type { User } from "~/lib/types.ts";
 
 export type RequestType = { postId: number };

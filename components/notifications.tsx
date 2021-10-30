@@ -1,4 +1,5 @@
 import React from 'react'
+
 import type { AppNotification } from '~/lib/db.ts';
 
 type Props = {

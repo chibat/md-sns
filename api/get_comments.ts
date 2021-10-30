@@ -1,5 +1,6 @@
-import type { APIHandler } from "aleph/types.d.ts";
 import { selectComments } from '~/lib/db.ts';
+
+import type { APIHandler } from "aleph/types.d.ts";
 import type { Comment } from '~/lib/db.ts';
 
 export type RequestType = { postId: number };

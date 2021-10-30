@@ -1,12 +1,13 @@
 import React from 'react'
 import { useEffect, useContext, useState } from 'react'
-import hljs from 'https://esm.sh/highlight.js';
-import marked from 'https://esm.sh/marked@2.0.1';
+import hljs from 'highlight.js';
+import marked from 'marked';
 import { UserContext } from '~/lib/UserContext.ts'
 import { useRouter, useDeno } from 'aleph/react'
 import { request } from '~/lib/request.ts'
 import { selectPost, Post } from "~/lib/db.ts";
 import LikeUsersModal from '~/components/like_users_modal.tsx'
+
 import type { RequestType as DeleteRequest, ResponseType as DeleteResponse } from "~/api/delete_post.ts";
 import type { RequestType as CreateRequest, ResponseType as CreateResponse } from "~/api/create_comment.ts";
 import type { RequestType as CommentsRequest, ResponseType as CommentsResponse } from "~/api/get_comments.ts";

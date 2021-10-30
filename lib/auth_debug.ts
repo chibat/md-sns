@@ -1,5 +1,5 @@
-import { clientId, clientSecret } from "./env.ts";
-import { getAuthUrl, getCode, getTokenByCode, getUserByAccessToken } from "./auth.ts";
+import { clientId, clientSecret } from "~/lib/env.ts";
+import { getAuthUrl, getCode, getTokenByCode, getUserByAccessToken } from "~/lib/auth.ts";
 
 if (import.meta.main) {
   const redirectUri = "http://localhost:8080/api/callback";

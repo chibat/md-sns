@@ -2,8 +2,9 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import Notifications from '~/components/notifications.tsx'
 import { request } from '~/lib/request.ts';
-import type { ResponseType } from "~/api/get_notifications.ts";
 import { AppNotification } from '~/lib/db.ts';
+
+import type { ResponseType } from "~/api/get_notifications.ts";
 
 export default function User() {
   console.debug("start ");

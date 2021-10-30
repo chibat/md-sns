@@ -9,6 +9,7 @@ import { User } from '~/lib/types.ts';
 import FollowingUsersModal from '~/components/following_users_modal.tsx'
 import FollowerUsersModal from '~/components/follower_users_modal.tsx'
 import { ResponsePost } from "~/lib/types.ts";
+
 import type { RequestType, ResponseType } from "~/api/get_posts.ts";
 import type { RequestType as UserRequest, ResponseType as UserResponse } from "~/api/get_user.ts";
 import type { RequestType as FollowRequest, ResponseType as FollowResponse } from "~/api/create_follow.ts";

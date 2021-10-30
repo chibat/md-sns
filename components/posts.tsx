@@ -1,10 +1,11 @@
 import React from 'react'
 import { useEffect, useContext, useState } from 'react'
-import marked from 'https://esm.sh/marked@2.0.1';
-import hljs from 'https://esm.sh/highlight.js';
+import marked from 'marked';
+import hljs from 'highlight.js';
 import { UserContext } from '~/lib/UserContext.ts'
 import { request } from '~/lib/request.ts'
 import LikeUsersModal from '~/components/like_users_modal.tsx'
+
 import type { RequestType as DeleteRequest, ResponseType as DeleteResponse } from "~/api/delete_post.ts";
 import type { RequestType as LikeRequest, ResponseType as LikeResponse } from "~/api/create_like.ts";
 import type { RequestType as CancelLikeRequest, ResponseType as CancelLikeResponse } from "~/api/delete_like.ts";

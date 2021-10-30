@@ -1,8 +1,8 @@
-// React の依存がないファイルにする
-import type { APIResponse } from "aleph/types.d.ts";
 import { getCookies, setCookie } from "std/http/cookie.ts";
 import { clientId, clientSecret } from "~/lib/env.ts";
 import { LoginUser } from "~/lib/types.ts";
+
+import type { APIResponse } from "aleph/types.d.ts";
 
 const CALL_BACK_PATH = "/api/callback";
 

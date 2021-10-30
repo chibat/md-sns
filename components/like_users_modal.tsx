@@ -1,9 +1,10 @@
 
 import React from 'react'
 import { useEffect, useState } from 'react'
-import ReactModal from 'https://esm.sh/react-modal@3.14.3';
+import ReactModal from 'react-modal';
 import Users from '~/components/users.tsx'
 import { request } from '~/lib/request.ts'
+
 import type { RequestType as LikeUsersRequest, ResponseType as LikeUsersResponse } from "~/api/get_like_users.ts";
 
 export default function LikeUsersModal(props: { postId: number, modal: boolean, setModal: React.Dispatch<React.SetStateAction<boolean>> }) {

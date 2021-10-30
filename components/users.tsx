@@ -1,6 +1,7 @@
 import React from 'react'
-import type { User } from '~/lib/types.ts';
 import { useRouter } from 'aleph/react'
+
+import type { User } from '~/lib/types.ts';
 
 type Props = {
   users: User[];

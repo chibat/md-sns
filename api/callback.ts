@@ -1,7 +1,8 @@
-import type { APIHandler } from "aleph/types.d.ts";
+import { setCookie } from "std/http/cookie.ts";
 import { getCode, getTokenByCode, getCallbackUrl } from "~/lib/auth.ts";
 import { clientId, clientSecret } from "~/lib/env.ts";
-import { setCookie } from "std/http/cookie.ts";
+
+import type { APIHandler } from "aleph/types.d.ts";
 
 export const handler: APIHandler = async ({ response, request }) => {
   console.log(request.url);

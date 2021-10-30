@@ -1,6 +1,7 @@
-import type { APIHandler } from "aleph/types.d.ts";
 import { deleteComment, selectUserByGoogleId } from "~/lib/db.ts";
 import { getGoogleUser } from "~/lib/auth.ts";
+
+import type { APIHandler } from "aleph/types.d.ts";
 
 export type RequestType = { commentId: number };
 export type ResponseType = {};
