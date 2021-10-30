@@ -66,7 +66,7 @@ export default function App(
           <div className="container-fluid d-grid gap-3 align-items-center" style={{ gridTemplateColumns: "1fr 2fr" }}>
             <div>
               <img src="/assets/img/icon-192x192.png" width="32" className="me-2" />
-              <a className="fs-4 me-3 noDecoration" href="#" onClick={goTop}>md-sns</a>
+              <a className="fs-4 me-3 noDecoration" href={void (0)} onClick={goTop}>md-sns</a>
               <a className="me-3 noDecoration" href="/">All</a>
               {authInfo && authInfo.loginUser &&
                 <a className="me-3 noDecoration" href="/following">Following</a>
@@ -85,14 +85,14 @@ export default function App(
                     }
                   </a>
                   <div className="flex-shrink-0 dropdown">
-                    <a href="#" className="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a href={void (0)} className="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
                       <img src={authInfo.loginUser.picture} alt="mdo" width="32" height="32" className="rounded-circle" />
                     </a>
                     <ul className="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
                       <li><a className="dropdown-item" href={`/users/${authInfo.loginUser.userId}`}>Profile</a></li>
                       <li><a className="dropdown-item" href="/likes">Likes</a></li>
                       <li><hr className="dropdown-divider" /></li>
-                      <li><a className="dropdown-item" href="#" onClick={signout}>Sign out</a></li>
+                      <li><a className="dropdown-item" href={void (0)} onClick={signout}>Sign out</a></li>
                     </ul>
                   </div>
                 </>
