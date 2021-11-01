@@ -1,17 +1,17 @@
 import React from 'react'
 import { useContext, useState, useEffect } from 'react'
-import { useRouter } from 'aleph/react'
+import { useRouter, useDeno } from 'aleph/react'
 import { UserContext } from '~/lib/UserContext.ts'
 import Posts from '~/components/posts.tsx'
 import { request } from '~/lib/request.ts';
 import { PAGE_ROWS } from '~/lib/constants.ts';
-import { User } from '~/lib/types.ts';
 import FollowingUsersModal from '~/components/following_users_modal.tsx'
 import FollowerUsersModal from '~/components/follower_users_modal.tsx'
 import { ResponsePost } from "~/lib/types.ts";
+import { selectUser } from "~/lib/db.ts";
 
 import type { RequestType, ResponseType } from "~/api/get_posts.ts";
-import type { RequestType as UserRequest, ResponseType as UserResponse } from "~/api/get_user.ts";
+import type { RequestType as FollowInfoRequest, ResponseType as FollowInfoResponse } from "~/api/get_follow_info.ts";
 import type { RequestType as FollowRequest, ResponseType as FollowResponse } from "~/api/create_follow.ts";
 import type { RequestType as UnfollowRequest, ResponseType as UnfollowResponse } from "~/api/delete_follow.ts";
 
@@ -25,7 +25,6 @@ export default function UserId() {
   const [posts, setPosts] = useState<Array<ResponsePost>>([]);
   const [previousButton, setPreviousButton] = useState<boolean>(false);
   const [nextButton, setNextButton] = useState<boolean>(false);
-  const [pageUser, setPageUser] = useState<User | null>();
   const [loading, setLoading] = useState<boolean>(false);
   const [followLoading, setFollowLoading] = useState<boolean>(false);
   const [following, setFollowing] = useState<string>('0');
@@ -34,15 +33,18 @@ export default function UserId() {
   const [followingModal, setFollowingModal] = useState<boolean>(false);
   const [followerModal, setFollowerModal] = useState<boolean>(false);
 
+  const pageUser = useDeno(async () => {
+    return await selectUser(userId);
+  }, { revalidate: true });
+
   useEffect(() => {
+    if (!pageUser) {
+      router.push("/");
+      return;
+    }
     (async () => {
       setLoading(true);
-      const result = await request<UserRequest, UserResponse>("get_user", { userId });
-      if (!result.user) {
-        router.push("/");
-        return;
-      }
-      setPageUser(result.user);
+      const result = await request<FollowInfoRequest, FollowInfoResponse>("get_follow_info", { userId });
       setFollowing(result.following);
       setFollowers(result.followers);
       setIsFollowing(result.isFollowing);
@@ -91,7 +93,7 @@ export default function UserId() {
   async function follow() {
     if (pageUser) {
       setFollowLoading(true);
-      await request<FollowRequest, FollowResponse>("create_follow", { followingUserId: pageUser.userId });
+      await request<FollowRequest, FollowResponse>("create_follow", { followingUserId: pageUser.id });
       setFollowers((Number(followers) + 1).toString());
       setIsFollowing(!isFollowing);
       setFollowLoading(false);
@@ -101,7 +103,7 @@ export default function UserId() {
   async function unfollow() {
     if (pageUser) {
       setFollowLoading(true);
-      await request<UnfollowRequest, UnfollowResponse>("delete_follow", { followingUserId: pageUser.userId, });
+      await request<UnfollowRequest, UnfollowResponse>("delete_follow", { followingUserId: pageUser.id, });
       const _followers = Number(followers) - 1;
       setFollowers((_followers < 0 ? 0 : _followers).toString());
       setIsFollowing(!isFollowing);
@@ -121,6 +123,13 @@ export default function UserId() {
     <>
       <head>
         <title>md-sns</title>
+        <meta property="og:url" content="https://md-sns.herokuapp.com/"></meta>
+        <meta property="og:title" content={`${pageUser?.name} - md-sns`}></meta>
+        <meta property="og:description" content={pageUser?.name}></meta>
+        <meta property="og:image" content={pageUser?.picture} />
+        <meta name="twitter:card" content="summary"></meta>
+        <meta name="twitter:site" content="@tomofummy" />
+        <meta name="twitter:image" content={pageUser?.picture} />
       </head>
       {loading &&
         <div className="d-flex justify-content-center">
@@ -132,7 +141,7 @@ export default function UserId() {
       {!loading &&
         <>
           <h1><img src={pageUser?.picture} className="img-thumbnail" alt="" /> {pageUser?.name}</h1>
-          {(loginUser && pageUser && pageUser.userId !== loginUser.userId) &&
+          {(loginUser && pageUser && pageUser.id !== loginUser.userId) &&
             <>
               {!isFollowing &&
                 <button className="btn btn-secondary me-2 mb-2" onClick={follow} style={{ width: "150px" }} disabled={followLoading}>
@@ -162,7 +171,7 @@ export default function UserId() {
           <div className="mb-3">
             <a className="noDecoration me-3" onClick={displayFollowingUsers}>{following} Following</a>
             <a className="noDecoration me-3" onClick={displayFollowerUsers}>{followers} Follower{followers === "1" ? "" : "s"}</a>
-            {(loginUser && pageUser && pageUser.userId === loginUser.userId) &&
+            {(loginUser && pageUser && pageUser.id === loginUser.userId) &&
               <a className="noDecoration" href="/likes">Likes</a>
             }
           </div>
