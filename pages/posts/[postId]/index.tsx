@@ -131,6 +131,7 @@ export default function Index() {
             <meta property="og:image" content={post.picture} />
             <meta name="twitter:card" content="summary"></meta>
             <meta name="twitter:site" content="@tomofummy" />
+            <meta name="twitter:image" content={post.picture} />
           </head>
           <div className="card mb-3">
             <div className="card-header bg-transparent d-flex justify-content-between">

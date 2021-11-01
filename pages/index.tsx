@@ -79,6 +79,7 @@ export default function Home() {
         <meta name="twitter:card" content="summary"></meta>
         <meta name="twitter:site" content="@tomofummy" />
         <meta name="twitter:creator" content="@tomofummy" />
+        <meta name="twitter:image" content="https://md-sns.herokuapp.com/assets/img/icon-192x192.png" />
       </head>
       {user &&
         <div className="card mb-3">
