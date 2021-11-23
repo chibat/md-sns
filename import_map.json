@@ -10,7 +10,6 @@
     "react-modal": "https://esm.sh/react-modal@3.14.3",
     "marked": "https://esm.sh/marked@2.0.1",
     "~/": "./",
-    "https://deno.land/std@0.115.0/": "https://deno.land/std@0.115.1/",
     "std/": "https://deno.land/std@0.107.0/"
   },
   "scopes": {}
