@@ -11,7 +11,7 @@
     "marked": "https://esm.sh/marked@2.0.1",
     "~/": "./",
     "https://deno.land/std@0.115.0/": "https://deno.land/std@0.115.1/",
-    "std/": "https://deno.land/std@0.107.0/"
+    "std/": "https://deno.land/std@0.115.1/"
   },
   "scopes": {}
 }
