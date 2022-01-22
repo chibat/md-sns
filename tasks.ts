@@ -101,6 +101,7 @@ async function start() {
       "cdn.esm.sh",
       "registry.npmjs.org",
       "cdnjs.cloudflare.com",
+      "cdn.jsdelivr.net",
       databaseHost,
       `${databaseHostname}:0`,
     ],
@@ -118,6 +119,9 @@ async function start() {
       "APP_AUTH_CLIENT_ID",
       "APP_AUTH_CLIENT_SECRET",
       "DATABASE_URL",
+      "NODE_ENV",
+      "TERM",
+      "BROWSERSLIST_DISABLE_CACHE",
     ],
     "--allow-run": [
       Deno.execPath(),
